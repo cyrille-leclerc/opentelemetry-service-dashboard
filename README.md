@@ -1,2 +1,2 @@
-# grafana-opentelemetry-dashboards
-Grafana dashboards for OpenTelemetry data
+# Awesome OpenTelemetry Dashboards
+Awesome OpenTelemetry dashboards, alerts, and queries with Grafana, Prometheus, Mimir, Loki, Tempo, and Pyroscope
