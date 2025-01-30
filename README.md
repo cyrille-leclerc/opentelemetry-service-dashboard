@@ -2,7 +2,7 @@
 
 Grafana dashboards for OpenTelemetry services.
 
-[Grafana dashboard for OpenTelemetry services](docs/images/otel-svc-dashboard-screenshot-01.png)
+![Grafana dashboard for OpenTelemetry services](docs/images/otel-svc-dashboard-screenshot-01.png)
 
 ## Setup
 
