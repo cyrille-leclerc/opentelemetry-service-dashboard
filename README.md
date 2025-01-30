@@ -87,10 +87,9 @@ service:
       exporters: [otlphttp/logs]
       #exporters: [otlphttp/logs,debug/logs]
 ```
-
-
-
 ## The drop down list for services is empty
+
+TODO
 
 ## License
 
