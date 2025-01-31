@@ -1,4 +1,81 @@
 {
+  "__inputs": [
+    {
+      "name": "DS_PROMETHEUS_DATASOURCE",
+      "label": "prometheus_datasource",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus"
+    },
+    {
+      "name": "DS_LOKI_DATASOURCE",
+      "label": "loki_datasource",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "loki",
+      "pluginName": "Loki"
+    },
+    {
+      "name": "DS_TEMPO_DATASOURCE",
+      "label": "tempo_datasource",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "tempo",
+      "pluginName": "Tempo"
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "11.5.0-81895"
+    },
+    {
+      "type": "panel",
+      "id": "logs",
+      "name": "Logs",
+      "version": ""
+    },
+    {
+      "type": "datasource",
+      "id": "loki",
+      "name": "Loki",
+      "version": "1.0.0"
+    },
+    {
+      "type": "datasource",
+      "id": "prometheus",
+      "name": "Prometheus",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    },
+    {
+      "type": "datasource",
+      "id": "tempo",
+      "name": "Tempo",
+      "version": "11.5.0-pre"
+    },
+    {
+      "type": "panel",
+      "id": "text",
+      "name": "Text",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
+    }
+  ],
   "annotations": {
     "list": [
       {
@@ -21,18 +98,14 @@
       }
     ]
   },
-  "description": "Instrument services with OpenTelemetry and send traces, metrics, and logs to Tempo, a Prometheus database like Mimir, and Loki.",
+  "description": "OpenTelemetry service health dashboard. \nInstrument services with OpenTelemetry, send traces, metrics, and logs to Tempo, a Prometheus database like Mimir, and Loki, and visualize the health of these services with this dashboard.",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 318,
+  "id": null,
   "links": [],
   "panels": [
     {
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
       "gridPos": {
         "h": 2,
         "w": 13,
@@ -50,7 +123,6 @@
         "mode": "markdown"
       },
       "pluginVersion": "11.5.0-81895",
-      "title": "",
       "type": "text"
     },
     {
@@ -156,7 +228,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${prometheus_datasource}"
+            "uid": "${DS_PROMETHEUS_DATASOURCE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -187,7 +259,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${prometheus_datasource}"
+            "uid": "${DS_PROMETHEUS_DATASOURCE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -293,7 +365,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${prometheus_datasource}"
+            "uid": "${DS_PROMETHEUS_DATASOURCE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -401,7 +473,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${prometheus_datasource}"
+            "uid": "${DS_PROMETHEUS_DATASOURCE}"
           },
           "editorMode": "code",
           "expr": "(sum(rate(http_server_request_duration_seconds_count{job=~\"$service_namespace/$service_name\"}[$__rate_interval])) by (job)) * $__interval_ms / 1000",
@@ -517,7 +589,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${prometheus_datasource}"
+            "uid": "${DS_PROMETHEUS_DATASOURCE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -548,7 +620,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${prometheus_datasource}"
+            "uid": "${DS_PROMETHEUS_DATASOURCE}"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -652,7 +724,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${prometheus_datasource}"
+            "uid": "${DS_PROMETHEUS_DATASOURCE}"
           },
           "disableTextWrap": false,
           "editorMode": "code",
@@ -760,7 +832,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${prometheus_datasource}"
+            "uid": "${DS_PROMETHEUS_DATASOURCE}"
           },
           "editorMode": "code",
           "expr": "(sum(rate(rpc_server_duration_milliseconds_count{job=~\"$service_namespace/$service_name\"}[$__rate_interval])) by (job)) * $__interval_ms / 1000",
@@ -892,7 +964,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${prometheus_datasource}"
+            "uid": "${DS_PROMETHEUS_DATASOURCE}"
           },
           "disableTextWrap": false,
           "editorMode": "code",
@@ -920,7 +992,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${prometheus_datasource}"
+            "uid": "${DS_PROMETHEUS_DATASOURCE}"
           },
           "editorMode": "code",
           "expr": "\n        histogram_quantile(\n            0.99,\n            sum by (le, operation) (\n                label_join(\n                rate(http_server_request_duration_seconds_bucket{job=~\"$service_namespace/$service_name\"}[5m]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n                )\n            )\n        )\n    ",
@@ -1078,7 +1150,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${prometheus_datasource}"
+            "uid": "${DS_PROMETHEUS_DATASOURCE}"
           },
           "disableTextWrap": false,
           "editorMode": "code",
@@ -1107,7 +1179,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${prometheus_datasource}"
+            "uid": "${DS_PROMETHEUS_DATASOURCE}"
           },
           "editorMode": "code",
           "expr": "\n        histogram_quantile(\n            0.99,\n            sum by (le, operation) (\n                label_join(\n                rate(rpc_server_duration_milliseconds_bucket{job=~\"$service_namespace/$service_name\"}[5m]),\n                \"operation\",\n                \"/\",\n                \"rpc_service\",\n                \"rpc_method\"\n                )\n            )\n        )\n    ",
@@ -1272,7 +1344,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${prometheus_datasource}"
+            "uid": "${DS_PROMETHEUS_DATASOURCE}"
           },
           "disableTextWrap": false,
           "editorMode": "code",
@@ -1300,7 +1372,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${prometheus_datasource}"
+            "uid": "${DS_PROMETHEUS_DATASOURCE}"
           },
           "editorMode": "code",
           "expr": "\nhistogram_quantile(\n    0.99,\n    sum by (le, outbound_service) (\n        label_join(\n        rate(http_client_request_duration_seconds_bucket{job=~\"$service_namespace/$service_name\"}[5m]),\n        \"outbound_service\",\n        \" \",\n        \"server_address\",\n        \"http_request_method\",\n        \"url_template\"\n        )\n    )\n)",
@@ -1455,7 +1527,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${prometheus_datasource}"
+            "uid": "${DS_PROMETHEUS_DATASOURCE}"
           },
           "disableTextWrap": false,
           "editorMode": "code",
@@ -1484,7 +1556,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${prometheus_datasource}"
+            "uid": "${DS_PROMETHEUS_DATASOURCE}"
           },
           "editorMode": "code",
           "expr": "\nhistogram_quantile(\n    0.99,\n    sum by (le, database) (\n        label_join(\n        rate(db_client_operation_duration_seconds_bucket{job=~\"$service_namespace/$service_name\"}[5m]),\n            \"database\",\n            \"/\",\n            \"server_address\",\n            \"db_namespace\"\n        )\n    )\n)",
@@ -1643,7 +1715,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${prometheus_datasource}"
+            "uid": "${DS_PROMETHEUS_DATASOURCE}"
           },
           "disableTextWrap": false,
           "editorMode": "code",
@@ -1672,7 +1744,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${prometheus_datasource}"
+            "uid": "${DS_PROMETHEUS_DATASOURCE}"
           },
           "editorMode": "code",
           "expr": "\nhistogram_quantile(\n    0.99,\n    sum by (le, outbound_service) (\n        label_join(\n        rate(rpc_client_duration_milliseconds_bucket{job=~\"$service_namespace/$service_name\"}[5m]),\n        \"outbound_service\",\n        \"/\",\n        \"server_address\",\n        \"rpc_service\",\n        \"rpc_method\"\n        )\n    )\n)",
@@ -1749,10 +1821,6 @@
         "uid": "${loki_datasource}"
       },
       "description": "Logs for the service",
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
       "gridPos": {
         "h": 6,
         "w": 24,
@@ -1776,7 +1844,7 @@
         {
           "datasource": {
             "type": "loki",
-            "uid": "${loki_datasource}"
+            "uid": "${DS_LOKI_DATASOURCE}"
           },
           "direction": "backward",
           "editorMode": "code",
@@ -1785,7 +1853,6 @@
           "refId": "A"
         }
       ],
-      "title": "",
       "type": "logs"
     },
     {
@@ -1922,7 +1989,7 @@
         {
           "datasource": {
             "type": "tempo",
-            "uid": "${tempo_datasource}"
+            "uid": "${DS_TEMPO_DATASOURCE}"
           },
           "filters": [
             {
@@ -1964,7 +2031,6 @@
           "tableType": "spans"
         }
       ],
-      "title": "",
       "type": "table"
     },
     {
@@ -2064,7 +2130,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${prometheus_datasource}"
+            "uid": "${DS_PROMETHEUS_DATASOURCE}"
           },
           "editorMode": "code",
           "expr": "sum by(instance) (jvm_cpu_recent_utilization_ratio{job=\"$service_namespace/$service_name\"})",
@@ -2127,22 +2193,16 @@
       "type": "table"
     }
   ],
-  "preload": false,
   "refresh": "5s",
   "schemaVersion": 40,
   "tags": [
-    "otel",
-    "opentelemetry",
-    "service"
+    "opentelemetry"
   ],
   "templating": {
     "list": [
       {
         "allowCustomValue": false,
-        "current": {
-          "text": "grafanacloud-cleclerc-prom",
-          "value": "grafanacloud-prom"
-        },
+        "current": {},
         "label": "Metrics",
         "name": "prometheus_datasource",
         "options": [],
@@ -2153,10 +2213,7 @@
       },
       {
         "allowCustomValue": false,
-        "current": {
-          "text": "grafanacloud-cleclerc-traces",
-          "value": "grafanacloud-traces"
-        },
+        "current": {},
         "label": "Traces",
         "name": "tempo_datasource",
         "options": [],
@@ -2167,10 +2224,7 @@
       },
       {
         "allowCustomValue": false,
-        "current": {
-          "text": "grafanacloud-cleclerc-logs",
-          "value": "grafanacloud-logs"
-        },
+        "current": {},
         "label": "Logs",
         "name": "loki_datasource",
         "options": [],
@@ -2181,13 +2235,10 @@
       },
       {
         "allowCustomValue": false,
-        "current": {
-          "text": "ecommerce",
-          "value": "ecommerce"
-        },
+        "current": {},
         "datasource": {
           "type": "tempo",
-          "uid": "${tempo_datasource}"
+          "uid": "${DS_TEMPO_DATASOURCE}"
         },
         "definition": "",
         "description": "Values instrospected from traces.",
@@ -2205,10 +2256,7 @@
         "type": "query"
       },
       {
-        "current": {
-          "text": "frontend",
-          "value": "frontend"
-        },
+        "current": {},
         "datasource": {
           "type": "tempo",
           "uid": "${tempo_datasource}"
@@ -2237,7 +2285,7 @@
   "timepicker": {},
   "timezone": "",
   "title": "OpenTelemetry Service",
-  "uid": "de5tgrobweolcd",
-  "version": 66,
+  "uid": "febljk0a32qyoa",
+  "version": 3,
   "weekStart": ""
 }
