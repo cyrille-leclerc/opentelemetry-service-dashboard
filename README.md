@@ -1,6 +1,6 @@
 # OpenTelemetry Service Dashboard
 
-Grafana dashboards for OpenTelemetry services.
+Grafana dashboard for OpenTelemetry services: visualize inbound and outbound RED metrics for HTTP and RPC calls as well as service logs and traces.
 
 ![Grafana dashboard for OpenTelemetry services](docs/images/otel-svc-dashboard-screenshot-01.png)
 
@@ -21,6 +21,11 @@ Grafana dashboards for OpenTelemetry services.
   * On the "Import dashboard" screen, enter the ID `TODO` then click on the "Load" button
 
 ## FAQ
+
+## What are the compatible OpenTelemetry SDKs and auto-instrumentations
+
+Dashboard mostly tested with the [OpenTelemetry Instrumentation for Java](https://github.com/open-telemetry/opentelemetry-java-instrumentation),
+compatible with instrumentation that produce OpenTelemetry compliant traces, logs, [HTTP metrics](https://opentelemetry.io/docs/specs/semconv/http/http-metrics/), [gRPC metrics](https://opentelemetry.io/docs/specs/semconv/rpc/rpc-metrics/), or [Database Client Metrics](https://opentelemetry.io/docs/specs/semconv/database/database-metrics/).
 
 ## How to send OpenTelemetry traces, metrics, and logs to Grafana Tempo, Mimir, and Loki
 
