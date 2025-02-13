@@ -1,6 +1,8 @@
-# OpenTelemetry Service Dashboard
+# Lightweight APM for OpenTelemetry
 
-Grafana dashboard for OpenTelemetry services: visualize inbound and outbound RED metrics for HTTP and RPC calls as well as service logs and traces.
+Instrument your applications using OpenTelemetry SDKs and send traces, metrics, and logs to [Tempo](https://grafana.com/oss/tempo/) for traces, a Prometheus-compatible database like [Mimir](https://grafana.com/oss/mimir/) for metrics, and [Loki](https://grafana.com/oss/loki/) for logs. This dashboard provides a centralized view of your application's health and performance.  
+
+For a fully managed observability stack, consider using [Grafana Cloud](https://grafana.com/products/cloud/).
 
 ![Grafana dashboard for OpenTelemetry services](docs/images/otel-svc-dashboard-screenshot-01.png)
 
@@ -92,9 +94,14 @@ service:
       exporters: [otlphttp/logs]
       #exporters: [otlphttp/logs,debug/logs]
 ```
+
 ## The drop down list for services is empty
 
 TODO
+
+## Support
+
+Please report issues on https://github.com/cyrille-leclerc/opentelemetry-service-dashboard.
 
 ## License
 
