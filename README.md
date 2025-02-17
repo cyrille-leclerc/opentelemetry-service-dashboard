@@ -24,7 +24,7 @@ For a fully managed observability stack, consider using [Grafana Cloud](https://
 
 ## User guide
 
-![Lightweight APM for OpenTelemetry - dashboard legend](docs/images/lightweight-apm-dashboard-legend.png)
+![Lightweight APM for OpenTelemetry - dashboard legend](docs/images/lightweight-apm-dashboard-legend-0.8.png)
 
 ## FAQ
 
