@@ -20,7 +20,7 @@ For a fully managed observability stack, consider using [Grafana Cloud](https://
 * In Grafana, create the "OpenTelemetry Service" dashboard:
   * Navigate to "Dashboards" then click on the "New / New dashboard" button
   * Click on "Import a dashboard"
-  * On the "Import dashboard" screen, enter the ID `TODO` then click on the "Load" button
+  * On the "Import dashboard" screen, enter the ID `22784` then click on the "Load" button
 
 ## User guide
 
