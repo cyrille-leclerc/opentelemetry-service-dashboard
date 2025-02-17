@@ -31,7 +31,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "11.6.0-82519"
+      "version": "11.6.0-82949"
     },
     {
       "type": "panel",
@@ -104,7 +104,7 @@
       }
     ]
   },
-  "description": "Lightweight APM dashboard for monitoring OpenTelemetry-based services.  \n\nInstrument your applications using OpenTelemetry SDKs and send traces, metrics, and logs to [Tempo](https://grafana.com/oss/tempo/) for traces, a Prometheus-compatible database like [Mimir](https://grafana.com/oss/mimir/) for metrics, and [Loki](https://grafana.com/oss/loki/) for logs. This dashboard provides a centralized view of your application's health and performance.  \n\nFor a fully managed observability stack, consider using [Grafana Cloud](https://grafana.com/products/cloud/).  \n\nLearn more about this dashboard [here](https://github.com/cyrille-leclerc/opentelemetry-service-dashboard).  ",
+  "description": "Lightweight APM dashboard for monitoring OpenTelemetry-based services.  \n\nInstrument your applications using OpenTelemetry SDKs and send traces, metrics, and logs to Tempo for traces, a Prometheus-compatible database like Mimir for metrics, and Loki for logs. This dashboard provides a centralized view of your application's health and performance.  \n\nFor a fully managed observability stack, consider using Grafana Cloud.  \n\nLearn more about this dashboard on https://github.com/cyrille-leclerc/opentelemetry-service-dashboard.",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
@@ -114,7 +114,7 @@
     {
       "gridPos": {
         "h": 2,
-        "w": 13,
+        "w": 7,
         "x": 0,
         "y": 0
       },
@@ -125,10 +125,10 @@
           "showLineNumbers": false,
           "showMiniMap": false
         },
-        "content": "#  OpenTelemetry service ${service_namespace}/${service_name}",
-        "mode": "markdown"
+        "content": "<h1><img src=\"https://opentelemetry.io/img/logos/opentelemetry-logo-nav.png\" alt=\"OpenTelemetry Icon\" width=\"25\" height=\"\"> Service ${service_namespace}/${service_name}</h1>",
+        "mode": "html"
       },
-      "pluginVersion": "11.6.0-82519",
+      "pluginVersion": "11.6.0-82949",
       "type": "text"
     },
     {
@@ -136,7 +136,7 @@
         "type": "prometheus",
         "uid": "${prometheus_datasource}"
       },
-      "description": "Shows the timestamp of the latest metrics received, the `target_info` metric.",
+      "description": "Shows the timestamp of the latest metrics received in the past 24h.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -148,8 +148,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -162,10 +161,11 @@
       },
       "gridPos": {
         "h": 2,
-        "w": 8,
-        "x": 13,
+        "w": 4,
+        "x": 7,
         "y": 0
       },
+      "hideTimeOverride": true,
       "id": 39,
       "options": {
         "colorMode": "background",
@@ -184,7 +184,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.6.0-82519",
+      "pluginVersion": "11.6.0-82949",
       "targets": [
         {
           "datasource": {
@@ -192,7 +192,7 @@
             "uid": "${DS_GRAFANACLOUD-CLECLERC-PROM}"
           },
           "editorMode": "code",
-          "expr": "timestamp(target_info{job=~\"$service_namespace/$service_name\"} or absent{})\n",
+          "expr": "timestamp(sum by (job) (target_info{job=~\"$service_namespace/$service_name\"}) or absent{})\n",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -200,6 +200,175 @@
       ],
       "timeFrom": "now-24h",
       "title": "Latest metrics received",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "${loki_datasource}"
+      },
+      "description": "Shows the timestamp of the latest logs received in the past 24h.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "#24292e",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "noValue": "No data",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "dateTimeFromNow"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 4,
+        "x": 11,
+        "y": 0
+      },
+      "hideTimeOverride": true,
+      "id": 40,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^Time$/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.6.0-82949",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "${DS_GRAFANACLOUD-CLECLERC-LOGS}"
+          },
+          "direction": "backward",
+          "editorMode": "code",
+          "expr": "sum(count_over_time({service_name=\"$service_name\", service_namespace=\"$service_namespace\"} [5m]))",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": "now-24h",
+      "title": "Latest logs received",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "tempo",
+        "uid": "${tempo_datasource}"
+      },
+      "description": "Shows the timestamp of the latest span received in the past 24h.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "#24292e",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "noValue": "No data",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "dateTimeFromNow"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 4,
+        "x": 15,
+        "y": 0
+      },
+      "hideTimeOverride": true,
+      "id": 41,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^time$/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.6.0-82949",
+      "targets": [
+        {
+          "datasource": {
+            "type": "tempo",
+            "uid": "${DS_GRAFANACLOUD-CLECLERC-TRACES}"
+          },
+          "filters": [
+            {
+              "id": "0344fb49",
+              "operator": "=",
+              "scope": "resource",
+              "tag": "service.namespace",
+              "value": [
+                "$service_namespace"
+              ],
+              "valueType": "string"
+            },
+            {
+              "id": "service-name",
+              "operator": "=",
+              "scope": "resource",
+              "tag": "service.name",
+              "value": [
+                "$service_name"
+              ],
+              "valueType": "string"
+            }
+          ],
+          "limit": 20,
+          "metricsQueryType": "range",
+          "query": "{resource.service.namespace=\"$service_namespace\" && resource.service.name=\"$service_name\"} | count_over_time()",
+          "queryType": "traceql",
+          "refId": "A",
+          "tableType": "traces"
+        }
+      ],
+      "timeFrom": "now-24h",
+      "title": "Latest traces received",
       "type": "stat"
     },
     {
@@ -267,8 +436,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -300,7 +468,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.6.0-82519",
+      "pluginVersion": "11.6.0-82949",
       "targets": [
         {
           "datasource": {
@@ -404,8 +572,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -437,7 +604,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.6.0-82519",
+      "pluginVersion": "11.6.0-82949",
       "targets": [
         {
           "datasource": {
@@ -512,8 +679,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -545,7 +711,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.6.0-82519",
+      "pluginVersion": "11.6.0-82949",
       "targets": [
         {
           "datasource": {
@@ -564,7 +730,7 @@
       "type": "timeseries"
     },
     {
-      "collapsed": false,
+      "collapsed": true,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -572,1320 +738,1315 @@
         "y": 11
       },
       "id": 31,
-      "panels": [],
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${prometheus_datasource}"
+          },
+          "description": "gRPC Endpoints aggregation, `rpc.server.duration` metric.\n\nSee https://opentelemetry.io/docs/specs/semconv/rpc/rpc-metrics/#metric-rpcserverduration",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "axisSoftMin": 0,
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "smooth",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "log": 10,
+                  "type": "log"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "ms"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 6,
+            "x": 0,
+            "y": 12
+          },
+          "id": 33,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "11.6.0-82949",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_GRAFANACLOUD-CLECLERC-PROM}"
+              },
+              "disableTextWrap": false,
+              "editorMode": "code",
+              "expr": "histogram_quantile(0.99, sum by(le, job) (rate(rpc_server_duration_milliseconds_bucket{job=\"$service_namespace/$service_name\"}[$__rate_interval])))",
+              "fullMetaSearch": false,
+              "hide": false,
+              "includeNullMetadata": true,
+              "legendFormat": "P99",
+              "range": true,
+              "refId": "P99",
+              "useBackend": false
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${prometheus_datasource}"
+              },
+              "disableTextWrap": false,
+              "editorMode": "builder",
+              "expr": "histogram_quantile(0.9, sum by(le, job) (rate(rpc_server_duration_milliseconds_bucket{job=\"$service_namespace/$service_name\"}[$__rate_interval])))",
+              "fullMetaSearch": false,
+              "includeNullMetadata": true,
+              "legendFormat": "P90",
+              "range": true,
+              "refId": "P90",
+              "useBackend": false
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_GRAFANACLOUD-CLECLERC-PROM}"
+              },
+              "disableTextWrap": false,
+              "editorMode": "builder",
+              "expr": "avg by(job) (rate(rpc_server_duration_milliseconds_sum{job=\"$service_namespace/$service_name\"}[$__rate_interval])) / avg by(job) (rate(rpc_server_duration_milliseconds_count{job=\"$service_namespace/$service_name\"}[$__rate_interval]))",
+              "fullMetaSearch": false,
+              "hide": false,
+              "includeNullMetadata": true,
+              "legendFormat": "AVG",
+              "range": true,
+              "refId": "AVG",
+              "useBackend": false
+            }
+          ],
+          "title": "Duration",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${prometheus_datasource}"
+          },
+          "description": "gRPC endpoints aggregation based on the `rpc.server.duration` metric.\n\nErrors are identified by `rpc.grpc.status_code != 0` which make the panel specific to the gRPC protocol.\n\nSee https://opentelemetry.io/docs/specs/semconv/rpc/rpc-metrics/#metric-rpcserverdurationInbound ",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "smooth",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 6,
+            "x": 6,
+            "y": 12
+          },
+          "id": 34,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "11.6.0-82949",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_GRAFANACLOUD-CLECLERC-PROM}"
+              },
+              "disableTextWrap": false,
+              "editorMode": "code",
+              "expr": "(sum without (rpc_grpc_status_code, instance) (rate(rpc_server_duration_milliseconds_count{job=\"$service_namespace/$service_name\", rpc_grpc_status_code!=\"0\"}[$__rate_interval])) * 100) / sum without (rpc_grpc_status_code, instance) (rate(rpc_server_duration_milliseconds_count{job=\"$service_namespace/$service_name\"}[$__rate_interval]))",
+              "fullMetaSearch": false,
+              "hide": false,
+              "includeNullMetadata": true,
+              "instant": false,
+              "legendFormat": "Error",
+              "range": true,
+              "refId": "ERR",
+              "useBackend": false
+            }
+          ],
+          "title": "Error",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${prometheus_datasource}"
+          },
+          "description": "gRPC endpoints aggregation on the  `rpc.server.duration` metric.\n\nSee https://opentelemetry.io/docs/specs/semconv/rpc/rpc-metrics/#metric-rpcserverduration",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "axisSoftMin": 0,
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "log": 10,
+                  "type": "log"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "reqps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 5,
+            "x": 12,
+            "y": 12
+          },
+          "id": 35,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "11.6.0-82949",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_GRAFANACLOUD-CLECLERC-PROM}"
+              },
+              "editorMode": "code",
+              "expr": "(sum(rate(rpc_server_duration_milliseconds_count{job=~\"$service_namespace/$service_name\"}[$__rate_interval])) by (job)) * $__interval_ms / 1000",
+              "hide": false,
+              "legendFormat": "Requests",
+              "range": true,
+              "refId": "RequestRate"
+            }
+          ],
+          "title": "Request Rate",
+          "type": "timeseries"
+        }
+      ],
       "title": "Server gRPC RED Metrics",
       "type": "row"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${prometheus_datasource}"
-      },
-      "description": "gRPC Endpoints aggregation, `rpc.server.duration` metric.\n\nSee https://opentelemetry.io/docs/specs/semconv/rpc/rpc-metrics/#metric-rpcserverduration",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "axisSoftMin": 0,
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "smooth",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "log": 10,
-              "type": "log"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "ms"
-        },
-        "overrides": []
-      },
+      "collapsed": true,
       "gridPos": {
-        "h": 8,
-        "w": 6,
+        "h": 1,
+        "w": 24,
         "x": 0,
         "y": 12
       },
-      "id": 33,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.6.0-82519",
-      "targets": [
+      "id": 22,
+      "panels": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_GRAFANACLOUD-CLECLERC-PROM}"
+            "uid": "${prometheus_datasource}"
           },
-          "disableTextWrap": false,
-          "editorMode": "code",
-          "expr": "histogram_quantile(0.99, sum by(le, job) (rate(rpc_server_duration_milliseconds_bucket{job=\"$service_namespace/$service_name\"}[$__rate_interval])))",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "legendFormat": "P99",
-          "range": true,
-          "refId": "P99",
-          "useBackend": false
+          "description": "Inbound HTTP operations of the service (aka HTTP endpoints) based on the `http.server.request.duration` metric.\n\nErrors are identified by `http.response.status_code=~\"5..\"`.\n\nSee https://opentelemetry.io/docs/specs/semconv/http/http-metrics/#metric-httpserverrequestduration",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "inspect": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Duration (p99)"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "s"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Rate"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "reqps"
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 219
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Error"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "percentunit"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 12,
+            "x": 0,
+            "y": 13
+          },
+          "id": 21,
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": true,
+                "displayName": "Operation"
+              }
+            ]
+          },
+          "pluginVersion": "11.6.0-82949",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_GRAFANACLOUD-CLECLERC-PROM}"
+              },
+              "disableTextWrap": false,
+              "editorMode": "code",
+              "expr": "\n        sum by (operation) (\n            label_join(\n                rate(http_server_request_duration_seconds_count{job=~\"$service_namespace/$service_name\"}[$__rate_interval]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n            )\n        )\n    ",
+              "fullMetaSearch": false,
+              "includeNullMetadata": true,
+              "legendFormat": "{{operation}}",
+              "range": true,
+              "refId": "RPS",
+              "useBackend": false
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${prometheus_datasource}"
+              },
+              "editorMode": "code",
+              "expr": "(\n        sum by (operation) (\n            label_join(\n                rate(http_server_request_duration_seconds_count{job=~\"$service_namespace/$service_name\", http_response_status_code=~\"5..\"}[$__rate_interval]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n            )\n        )\n     / \n        sum by (operation) (\n            label_join(\n                rate(http_server_request_duration_seconds_count{job=~\"$service_namespace/$service_name\"}[$__rate_interval]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n            )\n        )\n    ) or (0 * \n        sum by (operation) (\n            label_join(\n                rate(http_server_request_duration_seconds_count{job=~\"$service_namespace/$service_name\"}[$__rate_interval]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n            )\n        )\n    )",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "{{operation}}",
+              "range": true,
+              "refId": "ERR_PCT"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_GRAFANACLOUD-CLECLERC-PROM}"
+              },
+              "editorMode": "code",
+              "expr": "\n        histogram_quantile(\n            0.99,\n            sum by (le, operation) (\n                label_join(\n                rate(http_server_request_duration_seconds_bucket{job=~\"$service_namespace/$service_name\"}[5m]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n                )\n            )\n        )\n    ",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "{{operation}}",
+              "range": true,
+              "refId": "Duration"
+            }
+          ],
+          "title": "HTTP Operations",
+          "transformations": [
+            {
+              "id": "timeSeriesTable",
+              "options": {
+                "Duration": {
+                  "timeField": "Time"
+                },
+                "ERR_PCT": {
+                  "timeField": "Time"
+                },
+                "RPS": {
+                  "timeField": "Time"
+                }
+              }
+            },
+            {
+              "id": "joinByField",
+              "options": {
+                "byField": "operation",
+                "mode": "outer"
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "includeByName": {},
+                "indexByName": {
+                  "Trend #Duration": 1,
+                  "Trend #ERR_PCT": 2,
+                  "Trend #RPS": 3,
+                  "operation": 0
+                },
+                "renameByName": {
+                  "Trend #Duration": "Duration (p99)",
+                  "Trend #ERR_PCT": "Error",
+                  "Trend #RPS": "Rate",
+                  "operation": "Operation"
+                }
+              }
+            }
+          ],
+          "type": "table"
         },
         {
           "datasource": {
             "type": "prometheus",
             "uid": "${prometheus_datasource}"
           },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "histogram_quantile(0.9, sum by(le, job) (rate(rpc_server_duration_milliseconds_bucket{job=\"$service_namespace/$service_name\"}[$__rate_interval])))",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "legendFormat": "P90",
-          "range": true,
-          "refId": "P90",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_GRAFANACLOUD-CLECLERC-PROM}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "avg by(job) (rate(rpc_server_duration_milliseconds_sum{job=\"$service_namespace/$service_name\"}[$__rate_interval])) / avg by(job) (rate(rpc_server_duration_milliseconds_count{job=\"$service_namespace/$service_name\"}[$__rate_interval]))",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "legendFormat": "AVG",
-          "range": true,
-          "refId": "AVG",
-          "useBackend": false
-        }
-      ],
-      "title": "Duration",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${prometheus_datasource}"
-      },
-      "description": "gRPC endpoints aggregation based on the `rpc.server.duration` metric.\n\nErrors are identified by `rpc.grpc.status_code != 0` which make the panel specific to the gRPC protocol.\n\nSee https://opentelemetry.io/docs/specs/semconv/rpc/rpc-metrics/#metric-rpcserverdurationInbound ",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
+          "description": "Inbound gRPC operations of the service (aka gRPC endpoints) based on the `rpc.server.request.duration` metric.\n\nErrors are identified by `rpc.grpc.status_code != 0` which make the panel specific to the gRPC protocol.\n\nhttps://opentelemetry.io/docs/specs/semconv/rpc/rpc-metrics/#metric-rpcserverduration",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "inspect": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
             },
-            "insertNulls": false,
-            "lineInterpolation": "smooth",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
+            "overrides": [
               {
-                "color": "green",
-                "value": null
+                "matcher": {
+                  "id": "byName",
+                  "options": "Duration (p99)"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "ms"
+                  }
+                ]
               },
               {
-                "color": "red",
-                "value": 80
+                "matcher": {
+                  "id": "byName",
+                  "options": "Rate"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "reqps"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Error"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "percentunit"
+                  }
+                ]
               }
             ]
           },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 6,
-        "y": 12
-      },
-      "id": 34,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.6.0-82519",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_GRAFANACLOUD-CLECLERC-PROM}"
+          "gridPos": {
+            "h": 5,
+            "w": 12,
+            "x": 12,
+            "y": 13
           },
-          "disableTextWrap": false,
-          "editorMode": "code",
-          "expr": "(sum without (rpc_grpc_status_code, instance) (rate(rpc_server_duration_milliseconds_count{job=\"$service_namespace/$service_name\", rpc_grpc_status_code!=\"0\"}[$__rate_interval])) * 100) / sum without (rpc_grpc_status_code, instance) (rate(rpc_server_duration_milliseconds_count{job=\"$service_namespace/$service_name\"}[$__rate_interval]))",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "Error",
-          "range": true,
-          "refId": "ERR",
-          "useBackend": false
-        }
-      ],
-      "title": "Error",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${prometheus_datasource}"
-      },
-      "description": "gRPC endpoints aggregation on the  `rpc.server.duration` metric.\n\nSee https://opentelemetry.io/docs/specs/semconv/rpc/rpc-metrics/#metric-rpcserverduration",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "axisSoftMin": 0,
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
+          "id": 27,
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
             },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "log": 10,
-              "type": "log"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
+            "showHeader": true,
+            "sortBy": [
               {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
+                "desc": true,
+                "displayName": "Operation"
               }
             ]
           },
-          "unit": "reqps"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 5,
-        "x": 12,
-        "y": 12
-      },
-      "id": 35,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.6.0-82519",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_GRAFANACLOUD-CLECLERC-PROM}"
-          },
-          "editorMode": "code",
-          "expr": "(sum(rate(rpc_server_duration_milliseconds_count{job=~\"$service_namespace/$service_name\"}[$__rate_interval])) by (job)) * $__interval_ms / 1000",
-          "hide": false,
-          "legendFormat": "Requests",
-          "range": true,
-          "refId": "RequestRate"
+          "pluginVersion": "11.6.0-82949",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_GRAFANACLOUD-CLECLERC-PROM}"
+              },
+              "disableTextWrap": false,
+              "editorMode": "code",
+              "expr": "\nsum by (operation) (\n    label_join(\n        rate(rpc_server_duration_milliseconds_count{job=~\"$service_namespace/$service_name\"}[$__rate_interval]),\n        \"operation\",\n        \"/\",\n        \"rpc_service\",\n        \"rpc_method\"\n    )\n)\n    ",
+              "fullMetaSearch": false,
+              "hide": false,
+              "includeNullMetadata": true,
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "RPS",
+              "useBackend": false
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${prometheus_datasource}"
+              },
+              "editorMode": "code",
+              "expr": "(\n        sum by (operation) (\n            label_join(\n                rate(rpc_server_duration_milliseconds_count{job=~\"$service_namespace/$service_name\", rpc_grpc_status_code!=\"0\"}[$__rate_interval]),\n                \"operation\",\n                \"/\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n     / \n        sum by (operation) (\n            label_join(\n                rate(rpc_server_duration_milliseconds_count{job=~\"$service_namespace/$service_name\"}[$__rate_interval]),\n                \"operation\",\n                \"/\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n    ) or (0 * \n        sum by (operation) (\n            label_join(\n                rate(rpc_server_duration_milliseconds_count{job=~\"$service_namespace/$service_name\"}[$__rate_interval]),\n                \"operation\",\n                \"/\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n    )\n    ",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "ERR_PCT"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_GRAFANACLOUD-CLECLERC-PROM}"
+              },
+              "editorMode": "code",
+              "expr": "\n        histogram_quantile(\n            0.99,\n            sum by (le, operation) (\n                label_join(\n                rate(rpc_server_duration_milliseconds_bucket{job=~\"$service_namespace/$service_name\"}[5m]),\n                \"operation\",\n                \"/\",\n                \"rpc_service\",\n                \"rpc_method\"\n                )\n            )\n        )\n    ",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "{{operation}}",
+              "range": true,
+              "refId": "Duration"
+            }
+          ],
+          "title": "gRPC Operations",
+          "transformations": [
+            {
+              "id": "timeSeriesTable",
+              "options": {
+                "Duration": {
+                  "timeField": "Time"
+                },
+                "ERR_PCT": {
+                  "timeField": "Time"
+                },
+                "RPS": {
+                  "timeField": "Time"
+                }
+              }
+            },
+            {
+              "id": "joinByField",
+              "options": {
+                "byField": "operation",
+                "mode": "outer"
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "includeByName": {},
+                "indexByName": {
+                  "Trend #Duration": 1,
+                  "Trend #ERR_PCT": 2,
+                  "Trend #RPS": 3,
+                  "operation": 0
+                },
+                "renameByName": {
+                  "Trend #Duration": "Duration (p99)",
+                  "Trend #ERR_PCT": "Error",
+                  "Trend #RPS": "Rate",
+                  "operation": "Operation"
+                }
+              }
+            }
+          ],
+          "type": "table"
         }
       ],
-      "title": "Request Rate",
-      "type": "timeseries"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 20
-      },
-      "id": 22,
-      "panels": [],
       "title": "Inbound Operations",
       "type": "row"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${prometheus_datasource}"
-      },
-      "description": "Inbound HTTP operations of the service (aka HTTP endpoints) based on the `http.server.request.duration` metric.\n\nErrors are identified by `http.response.status_code=~\"5..\"`.\n\nSee https://opentelemetry.io/docs/specs/semconv/http/http-metrics/#metric-httpserverrequestduration",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Duration (p99)"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "s"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Rate"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "reqps"
-              },
-              {
-                "id": "custom.width",
-                "value": 219
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Error"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "percentunit"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 12,
-        "x": 0,
-        "y": 21
-      },
-      "id": 21,
-      "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true,
-        "sortBy": [
-          {
-            "desc": true,
-            "displayName": "Operation"
-          }
-        ]
-      },
-      "pluginVersion": "11.6.0-82519",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_GRAFANACLOUD-CLECLERC-PROM}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "code",
-          "expr": "\n        sum by (operation) (\n            label_join(\n                rate(http_server_request_duration_seconds_count{job=~\"$service_namespace/$service_name\"}[$__rate_interval]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n            )\n        )\n    ",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "legendFormat": "{{operation}}",
-          "range": true,
-          "refId": "RPS",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${prometheus_datasource}"
-          },
-          "editorMode": "code",
-          "expr": "(\n        sum by (operation) (\n            label_join(\n                rate(http_server_request_duration_seconds_count{job=~\"$service_namespace/$service_name\", http_response_status_code=~\"5..\"}[$__rate_interval]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n            )\n        )\n     / \n        sum by (operation) (\n            label_join(\n                rate(http_server_request_duration_seconds_count{job=~\"$service_namespace/$service_name\"}[$__rate_interval]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n            )\n        )\n    ) or (0 * \n        sum by (operation) (\n            label_join(\n                rate(http_server_request_duration_seconds_count{job=~\"$service_namespace/$service_name\"}[$__rate_interval]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n            )\n        )\n    )",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "{{operation}}",
-          "range": true,
-          "refId": "ERR_PCT"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_GRAFANACLOUD-CLECLERC-PROM}"
-          },
-          "editorMode": "code",
-          "expr": "\n        histogram_quantile(\n            0.99,\n            sum by (le, operation) (\n                label_join(\n                rate(http_server_request_duration_seconds_bucket{job=~\"$service_namespace/$service_name\"}[5m]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n                )\n            )\n        )\n    ",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "{{operation}}",
-          "range": true,
-          "refId": "Duration"
-        }
-      ],
-      "title": "HTTP Operations",
-      "transformations": [
-        {
-          "id": "timeSeriesTable",
-          "options": {
-            "Duration": {
-              "timeField": "Time"
-            },
-            "ERR_PCT": {
-              "timeField": "Time"
-            },
-            "RPS": {
-              "timeField": "Time"
-            }
-          }
-        },
-        {
-          "id": "joinByField",
-          "options": {
-            "byField": "operation",
-            "mode": "outer"
-          }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {},
-            "includeByName": {},
-            "indexByName": {
-              "Trend #Duration": 1,
-              "Trend #ERR_PCT": 2,
-              "Trend #RPS": 3,
-              "operation": 0
-            },
-            "renameByName": {
-              "Trend #Duration": "Duration (p99)",
-              "Trend #ERR_PCT": "Error",
-              "Trend #RPS": "Rate",
-              "operation": "Operation"
-            }
-          }
-        }
-      ],
-      "type": "table"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${prometheus_datasource}"
-      },
-      "description": "Inbound gRPC operations of the service (aka gRPC endpoints) based on the `rpc.server.request.duration` metric.\n\nErrors are identified by `rpc.grpc.status_code != 0` which make the panel specific to the gRPC protocol.\n\nhttps://opentelemetry.io/docs/specs/semconv/rpc/rpc-metrics/#metric-rpcserverduration",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Duration (p99)"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "ms"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Rate"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "reqps"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Error"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "percentunit"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 12,
-        "x": 12,
-        "y": 21
-      },
-      "id": 27,
-      "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true,
-        "sortBy": [
-          {
-            "desc": true,
-            "displayName": "Operation"
-          }
-        ]
-      },
-      "pluginVersion": "11.6.0-82519",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_GRAFANACLOUD-CLECLERC-PROM}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "code",
-          "expr": "\nsum by (operation) (\n    label_join(\n        rate(rpc_server_duration_milliseconds_count{job=~\"$service_namespace/$service_name\"}[$__rate_interval]),\n        \"operation\",\n        \"/\",\n        \"rpc_service\",\n        \"rpc_method\"\n    )\n)\n    ",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "RPS",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${prometheus_datasource}"
-          },
-          "editorMode": "code",
-          "expr": "(\n        sum by (operation) (\n            label_join(\n                rate(rpc_server_duration_milliseconds_count{job=~\"$service_namespace/$service_name\", rpc_grpc_status_code!=\"0\"}[$__rate_interval]),\n                \"operation\",\n                \"/\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n     / \n        sum by (operation) (\n            label_join(\n                rate(rpc_server_duration_milliseconds_count{job=~\"$service_namespace/$service_name\"}[$__rate_interval]),\n                \"operation\",\n                \"/\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n    ) or (0 * \n        sum by (operation) (\n            label_join(\n                rate(rpc_server_duration_milliseconds_count{job=~\"$service_namespace/$service_name\"}[$__rate_interval]),\n                \"operation\",\n                \"/\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n    )\n    ",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "ERR_PCT"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_GRAFANACLOUD-CLECLERC-PROM}"
-          },
-          "editorMode": "code",
-          "expr": "\n        histogram_quantile(\n            0.99,\n            sum by (le, operation) (\n                label_join(\n                rate(rpc_server_duration_milliseconds_bucket{job=~\"$service_namespace/$service_name\"}[5m]),\n                \"operation\",\n                \"/\",\n                \"rpc_service\",\n                \"rpc_method\"\n                )\n            )\n        )\n    ",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "{{operation}}",
-          "range": true,
-          "refId": "Duration"
-        }
-      ],
-      "title": "gRPC Operations",
-      "transformations": [
-        {
-          "id": "timeSeriesTable",
-          "options": {
-            "Duration": {
-              "timeField": "Time"
-            },
-            "ERR_PCT": {
-              "timeField": "Time"
-            },
-            "RPS": {
-              "timeField": "Time"
-            }
-          }
-        },
-        {
-          "id": "joinByField",
-          "options": {
-            "byField": "operation",
-            "mode": "outer"
-          }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {},
-            "includeByName": {},
-            "indexByName": {
-              "Trend #Duration": 1,
-              "Trend #ERR_PCT": 2,
-              "Trend #RPS": 3,
-              "operation": 0
-            },
-            "renameByName": {
-              "Trend #Duration": "Duration (p99)",
-              "Trend #ERR_PCT": "Error",
-              "Trend #RPS": "Rate",
-              "operation": "Operation"
-            }
-          }
-        }
-      ],
-      "type": "table"
-    },
-    {
-      "collapsed": false,
+      "collapsed": true,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 26
+        "y": 13
       },
       "id": 28,
-      "panels": [],
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${prometheus_datasource}"
+          },
+          "description": "HTTP calls made by the service based on the `http.client.request.duration` metric.\n\nCalls broken done by remote `server.address` and by `http.request.method`.\n\nSee https://opentelemetry.io/docs/specs/semconv/http/http-metrics/#metric-httpclientrequestduration",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "inspect": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Duration (P99)"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "s"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Rate"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "reqps"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Error"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "percentunit"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 12,
+            "x": 0,
+            "y": 14
+          },
+          "id": 23,
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true
+          },
+          "pluginVersion": "11.6.0-82949",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_GRAFANACLOUD-CLECLERC-PROM}"
+              },
+              "disableTextWrap": false,
+              "editorMode": "code",
+              "expr": "\n        sum by (outbound_service) (\n            label_join(\n                rate(http_client_request_duration_seconds_count{job=~\"$service_namespace/$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \" \",\n                \"server_address\",\n                \"http_request_method\",\n                \"url_template\"\n            )\n        )\n    ",
+              "fullMetaSearch": false,
+              "includeNullMetadata": true,
+              "legendFormat": "{{server_address}} {{http_request_method}} {{url_template}}",
+              "range": true,
+              "refId": "RPS",
+              "useBackend": false
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${prometheus_datasource}"
+              },
+              "editorMode": "code",
+              "expr": "(\n        sum by (outbound_service) (\n            label_join(\n                rate(http_client_request_duration_seconds_count{job=~\"$service_namespace/$service_name\", http_response_status_code=~\"5..\"}[$__rate_interval]),\n                \"outbound_service\",\n                \" \",\n                \"server_address\",\n                \"http_request_method\",\n                \"url_template\"\n            )\n        )\n     / \n        sum by (outbound_service) (\n            label_join(\n                rate(http_client_request_duration_seconds_count{job=~\"$service_namespace/$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \" \",\n                \"server_address\",\n                \"http_request_method\",\n                \"url_template\"\n            )\n        )\n    ) or (0 * \n        sum by (outbound_service) (\n            label_join(\n                rate(http_client_request_duration_seconds_count{job=~\"$service_namespace/$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \" \",\n                \"server_address\",\n                \"http_request_method\",\n                \"url_template\"\n            )\n        )\n    )",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "{{server_address}} {{http_request_method}} {{url_template}}",
+              "range": true,
+              "refId": "ERR_PCT"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_GRAFANACLOUD-CLECLERC-PROM}"
+              },
+              "editorMode": "code",
+              "expr": "\nhistogram_quantile(\n    0.99,\n    sum by (le, outbound_service) (\n        label_join(\n        rate(http_client_request_duration_seconds_bucket{job=~\"$service_namespace/$service_name\"}[5m]),\n        \"outbound_service\",\n        \" \",\n        \"server_address\",\n        \"http_request_method\",\n        \"url_template\"\n        )\n    )\n)",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "{{server_address}} {{http_request_method}} {{url_template}}",
+              "range": true,
+              "refId": "DURATION"
+            }
+          ],
+          "title": "Outbound HTTP Services",
+          "transformations": [
+            {
+              "id": "timeSeriesTable",
+              "options": {
+                "Duration": {
+                  "timeField": "Time"
+                },
+                "ERR_PCT": {
+                  "timeField": "Time"
+                },
+                "RPS": {
+                  "timeField": "Time"
+                }
+              }
+            },
+            {
+              "id": "joinByField",
+              "options": {
+                "byField": "outbound_service",
+                "mode": "outer"
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "includeByName": {},
+                "indexByName": {
+                  "Trend #DURATION": 1,
+                  "Trend #ERR_PCT": 2,
+                  "Trend #RPS": 3,
+                  "outbound_service": 0
+                },
+                "renameByName": {
+                  "Trend #DURATION": "Duration (P99)",
+                  "Trend #Duration": "Duration (p99)",
+                  "Trend #ERR_PCT": "Error",
+                  "Trend #RPS": "Rate",
+                  "operation": "Operation",
+                  "outbound_service": "Service"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${prometheus_datasource}"
+          },
+          "description": "DB calls made by the service based on the `db.client.operation.duration` metric.\n\nCalls broken down by `server.address` and `db.namespace`.\n\nSee https://opentelemetry.io/docs/specs/semconv/database/database-metrics/#metric-dbclientoperationduration\n",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "inspect": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Duration (P99)"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "s"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Rate"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "reqps"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Error"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "percentunit"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 12,
+            "x": 12,
+            "y": 14
+          },
+          "id": 24,
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "11.6.0-82949",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_GRAFANACLOUD-CLECLERC-PROM}"
+              },
+              "disableTextWrap": false,
+              "editorMode": "code",
+              "expr": "sum by (database) (\n    label_join(\n        rate(db_client_operation_duration_seconds_count{job=~\"$service_namespace/$service_name\"}[$__rate_interval]),\n        \"database\",\n        \"/\",\n        \"server_address\",\n        \"db_namespace\"\n    )\n)\n    ",
+              "fullMetaSearch": false,
+              "hide": false,
+              "includeNullMetadata": true,
+              "legendFormat": "{{server_address}} {{db_namespace}}",
+              "range": true,
+              "refId": "RPS",
+              "useBackend": false
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${prometheus_datasource}"
+              },
+              "editorMode": "code",
+              "expr": "(\n        sum by (database) (\n            label_join(\n                rate(db_client_operation_duration_seconds_count{job=~\"$service_namespace/$service_name\", http_response_status_code=~\"5..\"}[$__rate_interval]),\n                \"database\",\n                \"/\",\n                \"server_address\",\n                \"db_namespace\"\n            )\n        )\n     / \n        sum by (database) (\n            label_join(\n                rate(db_client_operation_duration_seconds_count{job=~\"$service_namespace/$service_name\"}[$__rate_interval]),\n                \"database\",\n                \"/\",\n                \"server_address\",\n                \"db_namespace\"\n            )\n        )\n    ) or (0 * \n        sum by (database) (\n            label_join(\n                rate(db_client_operation_duration_seconds_count{job=~\"$service_namespace/$service_name\"}[$__rate_interval]),\n                \"database\",\n                \"/\",\n                \"server_address\",\n                \"db_namespace\"\n            )\n        )\n    )",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "{{server_address}} {{db_namespace}}",
+              "range": true,
+              "refId": "ERR_PCT"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_GRAFANACLOUD-CLECLERC-PROM}"
+              },
+              "editorMode": "code",
+              "expr": "\nhistogram_quantile(\n    0.99,\n    sum by (le, database) (\n        label_join(\n        rate(db_client_operation_duration_seconds_bucket{job=~\"$service_namespace/$service_name\"}[5m]),\n            \"database\",\n            \"/\",\n            \"server_address\",\n            \"db_namespace\"\n        )\n    )\n)",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "{{server_address}} {{db_namespace}}",
+              "range": true,
+              "refId": "DURATION"
+            }
+          ],
+          "title": "Outbound Databases",
+          "transformations": [
+            {
+              "id": "timeSeriesTable",
+              "options": {
+                "DURATION": {
+                  "timeField": "Time"
+                },
+                "Duration": {
+                  "timeField": "Time"
+                },
+                "ERR_PCT": {
+                  "timeField": "Time"
+                },
+                "RPS": {
+                  "timeField": "Time"
+                }
+              }
+            },
+            {
+              "id": "joinByField",
+              "options": {
+                "byField": "database",
+                "mode": "outer"
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "includeByName": {},
+                "indexByName": {
+                  "Trend #DURATION": 1,
+                  "Trend #ERR_PCT": 2,
+                  "Trend #RPS": 3,
+                  "database": 0
+                },
+                "renameByName": {
+                  "Trend #DURATION": "Duration (P99)",
+                  "Trend #Duration": "Duration (p99)",
+                  "Trend #ERR_PCT": "Error",
+                  "Trend #RPS": "Rate",
+                  "database": "Database",
+                  "database_operation": "Database Operation",
+                  "operation": "Operation",
+                  "outbound_service": "Service"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${prometheus_datasource}"
+          },
+          "description": "gRPC calls made by the service based on the `rpc.client.request.duration` metric.\n\nSpecific to gRPC due to the usage of the `grpc.status.code` attribute to identify errors.\n\nCalls broken down by `server.address`, `rpc.service`, and `rpc.method`.\n\nSee https://opentelemetry.io/docs/specs/semconv/rpc/rpc-metrics/#rpc-client\n\n",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "inspect": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Duration (P99)"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "ms"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Rate"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "reqps"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Error"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "percentunit"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 12,
+            "x": 0,
+            "y": 20
+          },
+          "id": 32,
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true
+          },
+          "pluginVersion": "11.6.0-82949",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_GRAFANACLOUD-CLECLERC-PROM}"
+              },
+              "disableTextWrap": false,
+              "editorMode": "code",
+              "expr": "\n        sum by (outbound_service) (\n            label_join(\n                rate(rpc_client_duration_milliseconds_count{job=~\"$service_namespace/$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \"/\",\n                \"server_address\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n    ",
+              "fullMetaSearch": false,
+              "hide": false,
+              "includeNullMetadata": true,
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "RPS",
+              "useBackend": false
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${prometheus_datasource}"
+              },
+              "editorMode": "code",
+              "expr": "(\n        sum by (outbound_service) (\n            label_join(\n                rate(rpc_client_duration_milliseconds_count{job=~\"$service_namespace/$service_name\", http_response_status_code=~\"5..\"}[$__rate_interval]),\n                \"outbound_service\",\n                \"/\",\n                \"server_address\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n     / \n        sum by (outbound_service) (\n            label_join(\n                rate(rpc_client_duration_milliseconds_count{job=~\"$service_namespace/$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \"/\",\n                \"server_address\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n    ) or (0 * \n        sum by (outbound_service) (\n            label_join(\n                rate(rpc_client_duration_milliseconds_count{job=~\"$service_namespace/$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \"/\",\n                \"server_address\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n    )",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "ERR_PCT"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_GRAFANACLOUD-CLECLERC-PROM}"
+              },
+              "editorMode": "code",
+              "expr": "\nhistogram_quantile(\n    0.99,\n    sum by (le, outbound_service) (\n        label_join(\n        rate(rpc_client_duration_milliseconds_bucket{job=~\"$service_namespace/$service_name\"}[5m]),\n        \"outbound_service\",\n        \"/\",\n        \"server_address\",\n        \"rpc_service\",\n        \"rpc_method\"\n        )\n    )\n)",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "DURATION"
+            }
+          ],
+          "title": "Outbound gRPC Services",
+          "transformations": [
+            {
+              "id": "timeSeriesTable",
+              "options": {
+                "Duration": {
+                  "timeField": "Time"
+                },
+                "ERR_PCT": {
+                  "timeField": "Time"
+                },
+                "RPS": {
+                  "timeField": "Time"
+                }
+              }
+            },
+            {
+              "id": "joinByField",
+              "options": {
+                "byField": "outbound_service",
+                "mode": "outer"
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "includeByName": {},
+                "indexByName": {
+                  "Trend #DURATION": 1,
+                  "Trend #ERR_PCT": 2,
+                  "Trend #RPS": 3,
+                  "outbound_service": 0
+                },
+                "renameByName": {
+                  "Trend #DURATION": "Duration (P99)",
+                  "Trend #Duration": "Duration (p99)",
+                  "Trend #ERR_PCT": "Error",
+                  "Trend #RPS": "Rate",
+                  "operation": "Operation",
+                  "outbound_service": "Service Method"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
       "title": "Outbound Services and Databases",
       "type": "row"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${prometheus_datasource}"
-      },
-      "description": "HTTP calls made by the service based on the `http.client.request.duration` metric.\n\nCalls broken done by remote `server.address` and by `http.request.method`.\n\nSee https://opentelemetry.io/docs/specs/semconv/http/http-metrics/#metric-httpclientrequestduration",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Duration (P99)"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "s"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Rate"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "reqps"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Error"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "percentunit"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 12,
-        "x": 0,
-        "y": 27
-      },
-      "id": 23,
-      "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true
-      },
-      "pluginVersion": "11.6.0-82519",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_GRAFANACLOUD-CLECLERC-PROM}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "code",
-          "expr": "\n        sum by (outbound_service) (\n            label_join(\n                rate(http_client_request_duration_seconds_count{job=~\"$service_namespace/$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \" \",\n                \"server_address\",\n                \"http_request_method\",\n                \"url_template\"\n            )\n        )\n    ",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "legendFormat": "{{server_address}} {{http_request_method}} {{url_template}}",
-          "range": true,
-          "refId": "RPS",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${prometheus_datasource}"
-          },
-          "editorMode": "code",
-          "expr": "(\n        sum by (outbound_service) (\n            label_join(\n                rate(http_client_request_duration_seconds_count{job=~\"$service_namespace/$service_name\", http_response_status_code=~\"5..\"}[$__rate_interval]),\n                \"outbound_service\",\n                \" \",\n                \"server_address\",\n                \"http_request_method\",\n                \"url_template\"\n            )\n        )\n     / \n        sum by (outbound_service) (\n            label_join(\n                rate(http_client_request_duration_seconds_count{job=~\"$service_namespace/$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \" \",\n                \"server_address\",\n                \"http_request_method\",\n                \"url_template\"\n            )\n        )\n    ) or (0 * \n        sum by (outbound_service) (\n            label_join(\n                rate(http_client_request_duration_seconds_count{job=~\"$service_namespace/$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \" \",\n                \"server_address\",\n                \"http_request_method\",\n                \"url_template\"\n            )\n        )\n    )",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "{{server_address}} {{http_request_method}} {{url_template}}",
-          "range": true,
-          "refId": "ERR_PCT"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_GRAFANACLOUD-CLECLERC-PROM}"
-          },
-          "editorMode": "code",
-          "expr": "\nhistogram_quantile(\n    0.99,\n    sum by (le, outbound_service) (\n        label_join(\n        rate(http_client_request_duration_seconds_bucket{job=~\"$service_namespace/$service_name\"}[5m]),\n        \"outbound_service\",\n        \" \",\n        \"server_address\",\n        \"http_request_method\",\n        \"url_template\"\n        )\n    )\n)",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "{{server_address}} {{http_request_method}} {{url_template}}",
-          "range": true,
-          "refId": "DURATION"
-        }
-      ],
-      "title": "Outbound HTTP Services",
-      "transformations": [
-        {
-          "id": "timeSeriesTable",
-          "options": {
-            "Duration": {
-              "timeField": "Time"
-            },
-            "ERR_PCT": {
-              "timeField": "Time"
-            },
-            "RPS": {
-              "timeField": "Time"
-            }
-          }
-        },
-        {
-          "id": "joinByField",
-          "options": {
-            "byField": "outbound_service",
-            "mode": "outer"
-          }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {},
-            "includeByName": {},
-            "indexByName": {
-              "Trend #DURATION": 1,
-              "Trend #ERR_PCT": 2,
-              "Trend #RPS": 3,
-              "outbound_service": 0
-            },
-            "renameByName": {
-              "Trend #DURATION": "Duration (P99)",
-              "Trend #Duration": "Duration (p99)",
-              "Trend #ERR_PCT": "Error",
-              "Trend #RPS": "Rate",
-              "operation": "Operation",
-              "outbound_service": "Service"
-            }
-          }
-        }
-      ],
-      "type": "table"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${prometheus_datasource}"
-      },
-      "description": "DB calls made by the service based on the `db.client.operation.duration` metric.\n\nCalls broken down by `server.address` and `db.namespace`.\n\nSee https://opentelemetry.io/docs/specs/semconv/database/database-metrics/#metric-dbclientoperationduration\n",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Duration (P99)"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "s"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Rate"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "reqps"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Error"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "percentunit"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 12,
-        "x": 12,
-        "y": 27
-      },
-      "id": 24,
-      "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true,
-        "sortBy": []
-      },
-      "pluginVersion": "11.6.0-82519",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_GRAFANACLOUD-CLECLERC-PROM}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "code",
-          "expr": "sum by (database) (\n    label_join(\n        rate(db_client_operation_duration_seconds_count{job=~\"$service_namespace/$service_name\"}[$__rate_interval]),\n        \"database\",\n        \"/\",\n        \"server_address\",\n        \"db_namespace\"\n    )\n)\n    ",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "legendFormat": "{{server_address}} {{db_namespace}}",
-          "range": true,
-          "refId": "RPS",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${prometheus_datasource}"
-          },
-          "editorMode": "code",
-          "expr": "(\n        sum by (database) (\n            label_join(\n                rate(db_client_operation_duration_seconds_count{job=~\"$service_namespace/$service_name\", http_response_status_code=~\"5..\"}[$__rate_interval]),\n                \"database\",\n                \"/\",\n                \"server_address\",\n                \"db_namespace\"\n            )\n        )\n     / \n        sum by (database) (\n            label_join(\n                rate(db_client_operation_duration_seconds_count{job=~\"$service_namespace/$service_name\"}[$__rate_interval]),\n                \"database\",\n                \"/\",\n                \"server_address\",\n                \"db_namespace\"\n            )\n        )\n    ) or (0 * \n        sum by (database) (\n            label_join(\n                rate(db_client_operation_duration_seconds_count{job=~\"$service_namespace/$service_name\"}[$__rate_interval]),\n                \"database\",\n                \"/\",\n                \"server_address\",\n                \"db_namespace\"\n            )\n        )\n    )",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "{{server_address}} {{db_namespace}}",
-          "range": true,
-          "refId": "ERR_PCT"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_GRAFANACLOUD-CLECLERC-PROM}"
-          },
-          "editorMode": "code",
-          "expr": "\nhistogram_quantile(\n    0.99,\n    sum by (le, database) (\n        label_join(\n        rate(db_client_operation_duration_seconds_bucket{job=~\"$service_namespace/$service_name\"}[5m]),\n            \"database\",\n            \"/\",\n            \"server_address\",\n            \"db_namespace\"\n        )\n    )\n)",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "{{server_address}} {{db_namespace}}",
-          "range": true,
-          "refId": "DURATION"
-        }
-      ],
-      "title": "Outbound Databases",
-      "transformations": [
-        {
-          "id": "timeSeriesTable",
-          "options": {
-            "DURATION": {
-              "timeField": "Time"
-            },
-            "Duration": {
-              "timeField": "Time"
-            },
-            "ERR_PCT": {
-              "timeField": "Time"
-            },
-            "RPS": {
-              "timeField": "Time"
-            }
-          }
-        },
-        {
-          "id": "joinByField",
-          "options": {
-            "byField": "database",
-            "mode": "outer"
-          }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {},
-            "includeByName": {},
-            "indexByName": {
-              "Trend #DURATION": 1,
-              "Trend #ERR_PCT": 2,
-              "Trend #RPS": 3,
-              "database": 0
-            },
-            "renameByName": {
-              "Trend #DURATION": "Duration (P99)",
-              "Trend #Duration": "Duration (p99)",
-              "Trend #ERR_PCT": "Error",
-              "Trend #RPS": "Rate",
-              "database": "Database",
-              "database_operation": "Database Operation",
-              "operation": "Operation",
-              "outbound_service": "Service"
-            }
-          }
-        }
-      ],
-      "type": "table"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${prometheus_datasource}"
-      },
-      "description": "gRPC calls made by the service based on the `rpc.client.request.duration` metric.\n\nSpecific to gRPC due to the usage of the `grpc.status.code` attribute to identify errors.\n\nCalls broken down by `server.address`, `rpc.service`, and `rpc.method`.\n\nSee https://opentelemetry.io/docs/specs/semconv/rpc/rpc-metrics/#rpc-client\n\n",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Duration (P99)"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "ms"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Rate"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "reqps"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Error"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "percentunit"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 12,
-        "x": 0,
-        "y": 33
-      },
-      "id": 32,
-      "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true
-      },
-      "pluginVersion": "11.6.0-82519",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_GRAFANACLOUD-CLECLERC-PROM}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "code",
-          "expr": "\n        sum by (outbound_service) (\n            label_join(\n                rate(rpc_client_duration_milliseconds_count{job=~\"$service_namespace/$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \"/\",\n                \"server_address\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n    ",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "RPS",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${prometheus_datasource}"
-          },
-          "editorMode": "code",
-          "expr": "(\n        sum by (outbound_service) (\n            label_join(\n                rate(rpc_client_duration_milliseconds_count{job=~\"$service_namespace/$service_name\", http_response_status_code=~\"5..\"}[$__rate_interval]),\n                \"outbound_service\",\n                \"/\",\n                \"server_address\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n     / \n        sum by (outbound_service) (\n            label_join(\n                rate(rpc_client_duration_milliseconds_count{job=~\"$service_namespace/$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \"/\",\n                \"server_address\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n    ) or (0 * \n        sum by (outbound_service) (\n            label_join(\n                rate(rpc_client_duration_milliseconds_count{job=~\"$service_namespace/$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \"/\",\n                \"server_address\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n    )",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "ERR_PCT"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_GRAFANACLOUD-CLECLERC-PROM}"
-          },
-          "editorMode": "code",
-          "expr": "\nhistogram_quantile(\n    0.99,\n    sum by (le, outbound_service) (\n        label_join(\n        rate(rpc_client_duration_milliseconds_bucket{job=~\"$service_namespace/$service_name\"}[5m]),\n        \"outbound_service\",\n        \"/\",\n        \"server_address\",\n        \"rpc_service\",\n        \"rpc_method\"\n        )\n    )\n)",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "DURATION"
-        }
-      ],
-      "title": "Outbound gRPC Services",
-      "transformations": [
-        {
-          "id": "timeSeriesTable",
-          "options": {
-            "Duration": {
-              "timeField": "Time"
-            },
-            "ERR_PCT": {
-              "timeField": "Time"
-            },
-            "RPS": {
-              "timeField": "Time"
-            }
-          }
-        },
-        {
-          "id": "joinByField",
-          "options": {
-            "byField": "outbound_service",
-            "mode": "outer"
-          }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {},
-            "includeByName": {},
-            "indexByName": {
-              "Trend #DURATION": 1,
-              "Trend #ERR_PCT": 2,
-              "Trend #RPS": 3,
-              "outbound_service": 0
-            },
-            "renameByName": {
-              "Trend #DURATION": "Duration (P99)",
-              "Trend #Duration": "Duration (p99)",
-              "Trend #ERR_PCT": "Error",
-              "Trend #RPS": "Rate",
-              "operation": "Operation",
-              "outbound_service": "Service Method"
-            }
-          }
-        }
-      ],
-      "type": "table"
-    },
-    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 39
+        "y": 14
       },
       "id": 25,
       "panels": [],
@@ -1899,10 +2060,10 @@
       },
       "description": "Logs of the service, filtered by `service.name` and `service.namespace`.\n\nTo explore the logs, open the menu clicking on the icon `⋮` of this panel and click on `Explore`.",
       "gridPos": {
-        "h": 6,
+        "h": 15,
         "w": 24,
         "x": 0,
-        "y": 40
+        "y": 15
       },
       "id": 26,
       "options": {
@@ -1916,7 +2077,7 @@
         "sortOrder": "Ascending",
         "wrapLogMessage": false
       },
-      "pluginVersion": "11.6.0-82519",
+      "pluginVersion": "11.6.0-82949",
       "targets": [
         {
           "datasource": {
@@ -1925,7 +2086,7 @@
           },
           "direction": "backward",
           "editorMode": "code",
-          "expr": "{service_name=\"$service_name\", service_namespace=\"$service_namespace\"} | line_format `\u001b[1m{{if .level }}{{alignRight 5 .level}}{{else if .severity_text}}{{alignRight 5 .severity_text}}{{end}}\u001b[0m \u001b[90m[{{alignRight 10 .service_instance_id}}{{if .thread_name}}/{{alignRight 20 .thread_name}}{{else if eq \"java\" .telemetry_sdk_language }}                    {{end}}]\u001b[0m \u001b[36m{{if .scope_name }}{{alignRight 40 .scope_name}}{{end}}\u001b[0m {{__line__}} {{if .trace_id}} \u001b[37m\u001b[3m[trace_id={{.trace_id}}]{{end}}`",
+          "expr": "{service_name=\"$service_name\", service_namespace=\"$service_namespace\"} | line_format `\u001b[1m{{if .level }}{{alignRight 5 .level}}{{else if .severity_text}}{{alignRight 5 .severity_text}}{{end}}\u001b[0m \u001b[90m[{{alignRight 10 .service_instance_id}}{{if .thread_name}}/{{alignRight 20 .thread_name}}{{else if eq \"java\" .telemetry_sdk_language }}                    {{end}}]\u001b[0m \u001b[36m{{if .scope_name }}{{alignRight 40 .scope_name}}{{end}}{{if .exception_type}} \u001b[1;101m \u001b[0m{{end}} {{if .exception_type}}\u001b[1;91m{{.exception_type}}\u001b[0m{{end}}{{if .exception_message}} \u001b[1;91m{{.exception_message}}\u001b[0m {{end}} \u001b[0m {{__line__}} {{if .trace_id}} \u001b[37m\u001b[3m[trace_id={{.trace_id}}]{{end}}`",
           "queryType": "range",
           "refId": "A"
         }
@@ -1938,7 +2099,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 46
+        "y": 30
       },
       "id": 29,
       "panels": [],
@@ -1968,8 +2129,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2045,7 +2205,7 @@
         "h": 8,
         "w": 15,
         "x": 0,
-        "y": 47
+        "y": 31
       },
       "id": 30,
       "options": {
@@ -2061,7 +2221,7 @@
         "frameIndex": 0,
         "showHeader": true
       },
-      "pluginVersion": "11.6.0-82519",
+      "pluginVersion": "11.6.0-82949",
       "targets": [
         {
           "datasource": {
@@ -2116,7 +2276,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 55
+        "y": 39
       },
       "id": 37,
       "panels": [],
@@ -2146,8 +2306,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2187,7 +2346,7 @@
         "h": 5,
         "w": 12,
         "x": 0,
-        "y": 56
+        "y": 40
       },
       "id": 38,
       "options": {
@@ -2202,7 +2361,7 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "11.6.0-82519",
+      "pluginVersion": "11.6.0-82874",
       "targets": [
         {
           "datasource": {
@@ -2271,7 +2430,7 @@
     }
   ],
   "refresh": "5s",
-  "schemaVersion": 40,
+  "schemaVersion": 41,
   "tags": [
     "opentelemetry",
     "APM"
@@ -2364,6 +2523,6 @@
   "timezone": "",
   "title": "Lightweight APM for OpenTelemetry",
   "uid": "febljk0a32qyoa",
-  "version": 12,
+  "version": 17,
   "weekStart": ""
 }

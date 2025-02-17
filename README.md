@@ -4,7 +4,7 @@ Instrument your applications using OpenTelemetry SDKs and send traces, metrics, 
 
 For a fully managed observability stack, consider using [Grafana Cloud](https://grafana.com/products/cloud/).
 
-![Grafana dashboard for OpenTelemetry services](docs/images/otel-svc-dashboard-screenshot-01.png)
+![Lightweight APM for OpenTelemetry - highlights](docs/images/lightweight-apm-dashboard-highlights.png)
 
 ## Setup
 
@@ -21,6 +21,10 @@ For a fully managed observability stack, consider using [Grafana Cloud](https://
   * Navigate to "Dashboards" then click on the "New / New dashboard" button
   * Click on "Import a dashboard"
   * On the "Import dashboard" screen, enter the ID `TODO` then click on the "Load" button
+
+## User guide
+
+![Lightweight APM for OpenTelemetry - dashboard legend](docs/images/lightweight-apm-dashboard-legend.png)
 
 ## FAQ
 
