@@ -8,19 +8,102 @@ For a fully managed observability stack, consider using [Grafana Cloud](https://
 
 ## Setup
 
+* *IMPORTANT* Configure a [Prometheus](https://prometheus.io/) database like [Grafana Mimir](https://grafana.com/oss/mimir/) enabling resource attribute promotion
 * Instrument services with OpenTelemetry SDK libraries and auto-instrumentation agents. Ensure the instrumentation produces:
-  * Traces
   * Metrics: [HTTP metrics](https://opentelemetry.io/docs/specs/semconv/http/http-metrics/), [gRPC metrics](https://opentelemetry.io/docs/specs/semconv/rpc/rpc-metrics/), or [Database Client Metrics](https://opentelemetry.io/docs/specs/semconv/database/database-metrics/)
+  * Traces: optional
   * Logs: optional
 * Send generated telemetry (details in FAQ below):
   * Traces to [Grafana Tempo](https://grafana.com/oss/tempo/)
-  * Metrics to a [Prometheus](https://prometheus.io/) database like [Grafana Mimir](https://grafana.com/oss/mimir/)
-  * Logs to [Grafana Loki](https://grafana.com/oss/loki/) v3.0+ using the Loki OTLP/HTTP endpoint
+  * Metrics to a [Prometheus](https://prometheus.io/) database like [Grafana Mimir](https://grafana.com/oss/mimir/) using its OTLP endpoint
+  * Logs to [Grafana Loki](https://grafana.com/oss/loki/) using the Loki OTLP/HTTP endpoint
 * Ensure that a datasource is setup in Grafana for each of these Tempo, Prometheus, and Loki databases
 * In Grafana, create the "OpenTelemetry Service" dashboard:
   * Navigate to "Dashboards" then click on the "New / New dashboard" button
   * Click on "Import a dashboard"
   * On the "Import dashboard" screen, enter the ID `22784` then click on the "Load" button
+
+## Database configuration
+
+### Prometheus OTLP Endpoint configuration
+
+Example Prometheus OTLP Endpoint configuration
+
+```yml
+otlp:
+  keep_identifying_resource_attributes: true
+  promote_resource_attributes:
+    # REQUIRED FOR THIS DASHBOARD
+    - service.instance.id
+    - service.name
+    - service.namespace
+    - deployment.environment.name
+    # RECOMMENDED FOR OTEL METRICS IN GENERAL
+    - service.version
+    - cloud.availability_zone
+    - cloud.region
+    - container.name
+    - deployment.environment
+    - k8s.cluster.name
+    - k8s.container.name
+    - k8s.cronjob.name
+    - k8s.daemonset.name
+    - k8s.deployment.name
+    - k8s.job.name
+    - k8s.namespace.name
+    - k8s.pod.name
+    - k8s.replicaset.name
+    - k8s.statefulset.name
+```
+
+Learn more in Prometheus [configuration reference](https://prometheus.io/docs/prometheus/latest/configuration/configuration/) and [OpenTelemetry guide](https://prometheus.io/docs/guides/opentelemetry/).
+
+### Mimir OTLP Endpoint configuration
+
+Configure the parameters `otel_keep_identifying_resource_attributes` and `promote_otel_resource_attributes` on the OTLP endpoint.
+
+Example Mimir OTLP Endpoint configuration snippet:
+
+```yml
+# (experimental) Whether to keep identifying OTel resource attributes in the
+# target_info metric on top of converting to job and instance labels.
+# CLI flag: -distributor.otel-keep-identifying-resource-attributes
+otel_keep_identifying_resource_attributes: true
+# (experimental) Optionally specify OTel resource attributes to promote to
+# labels.
+# CLI flag: -distributor.otel-promote-resource-attributes
+promote_otel_resource_attributes: "service.instance.id, service.name, service.namespace, service.version, cloud.availability_zone, cloud.region, container.name, deployment.environment, deployment.environment.name, k8s.cluster.name, k8s.container.name, k8s.cronjob.name, k8s.daemonset.name, k8s.deployment.name, k8s.job.name, k8s.namespace.name, k8s.pod.name, k8s.replicaset.name, k8s.statefulset.name"
+```
+
+Learn more in [Mimir configuration parameters](https://github.com/grafana/mimir/blob/main/docs/sources/mimir/configure/configuration-parameters/index.md).
+
+### Grafana Cloud Metrics configuration
+
+Send OpenTelemetry metrics to the Grafana Cloud OTLP Endpoint as documented in Grafana Cloud / Send OTLP data and open a support ticket to activate `otel_keep_identifying_resource_attributes`.
+
+Note that the Grafana Cloud OTLP Endpoint is configured by default to promote the following resource attributes, this list can be modified through a support ticket. If your Grafana Cloud stack has not been configured, please open a support ticket. Default promoted resource attributes:
+
+```yml
+- service.instance.id
+- service.name
+- service.namespace
+- deployment.environment.name
+- service.version
+- cloud.availability_zone
+- cloud.region
+- container.name
+- deployment.environment
+- k8s.cluster.name
+- k8s.container.name
+- k8s.cronjob.name
+- k8s.daemonset.name
+- k8s.deployment.name
+- k8s.job.name
+- k8s.namespace.name
+- k8s.pod.name
+- k8s.replicaset.name
+- k8s.statefulset.name
+```
 
 ## User guide
 
