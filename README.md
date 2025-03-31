@@ -8,7 +8,7 @@ For a fully managed observability stack, consider using [Grafana Cloud](https://
 
 ## Setup
 
-* *IMPORTANT* Configure a [Prometheus](https://prometheus.io/) database like [Grafana Mimir](https://grafana.com/oss/mimir/) enabling resource attribute promotion
+* *IMPORTANT* Configure a [Prometheus](https://prometheus.io/) database like [Grafana Mimir](https://grafana.com/oss/mimir/) enabling resource attribute promotion  (see database configuration below)
 * Instrument services with OpenTelemetry SDK libraries and auto-instrumentation agents. Ensure the instrumentation produces:
   * Metrics: [HTTP metrics](https://opentelemetry.io/docs/specs/semconv/http/http-metrics/), [gRPC metrics](https://opentelemetry.io/docs/specs/semconv/rpc/rpc-metrics/), or [Database Client Metrics](https://opentelemetry.io/docs/specs/semconv/database/database-metrics/)
   * Traces: optional
