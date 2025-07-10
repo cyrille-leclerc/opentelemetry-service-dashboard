@@ -31,7 +31,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "12.0.0-85440"
+      "version": "12.1.0-91094"
     },
     {
       "type": "panel",
@@ -43,7 +43,7 @@
       "type": "datasource",
       "id": "loki",
       "name": "Loki",
-      "version": "1.0.0"
+      "version": "12.1.0-91094"
     },
     {
       "type": "datasource",
@@ -67,7 +67,7 @@
       "type": "datasource",
       "id": "tempo",
       "name": "Tempo",
-      "version": "12.0.0-pre"
+      "version": "12.1.0-91094"
     },
     {
       "type": "panel",
@@ -108,7 +108,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": null,
   "links": [],
   "panels": [
     {
@@ -125,10 +124,10 @@
           "showLineNumbers": false,
           "showMiniMap": false
         },
-        "content": "<h1 style=\"background-color:yellow ; color: black\">Dashboard setup instructions (delete this panel after setup)</h1>\n\nThis dashboard requires:\n\n## Metrics\n\nSend OpenTelemetry metrics to the OTLP endpoint of a Prometheus database.\n\n### Prometheus\n\nSend OpenTelemetry metrics to the Prometheus OTLP Endpoint and configure the parameters `keep_identifying_resource_attributes` and `promote_resource_attributes` on the OTLP endpoint. \n\nExample Prometheus OTLP Endpoint configuration snippet:\n\n```yml\notlp:\n  keep_identifying_resource_attributes: true\n  promote_resource_attributes:\n    # REQUIRED FOR THIS DASHBOARD\n    - service.instance.id\n    - service.name\n    - service.namespace\n    - deployment.environment.name\n    # RECOMMENDED FOR OTEL METRICS IN GENERAL\n    - service.version\n    - cloud.availability_zone\n    - cloud.region\n    - container.name\n    - deployment.environment\n    - k8s.cluster.name\n    - k8s.container.name\n    - k8s.cronjob.name\n    - k8s.daemonset.name\n    - k8s.deployment.name\n    - k8s.job.name\n    - k8s.namespace.name\n    - k8s.pod.name\n    - k8s.replicaset.name\n    - k8s.statefulset.name\n```\n\nLearn more in Prometheus [configuration reference](https://prometheus.io/docs/prometheus/latest/configuration/configuration/) and [OpenTelemetry guide](https://prometheus.io/docs/guides/opentelemetry/).\n\n### Mimir OTLP Endpoint configuration\n\nSend OpenTelemetry metrics to the Mimir OTLP Endpoint and configure the parameters `otel_keep_identifying_resource_attributes` and `promote_otel_resource_attributes` on the OTLP endpoint. \n\nExample Mimir OTLP Endpoint configuration snippet:\n\n```yml\n# (experimental) Whether to keep identifying OTel resource attributes in the\n# target_info metric on top of converting to job and instance labels.\n# CLI flag: -distributor.otel-keep-identifying-resource-attributes\notel_keep_identifying_resource_attributes: true\n# (experimental) Optionally specify OTel resource attributes to promote to\n# labels.\n# CLI flag: -distributor.otel-promote-resource-attributes\npromote_otel_resource_attributes: \"service.instance.id, service.name, service.namespace, service.version, cloud.availability_zone, cloud.region, container.name, deployment.environment, deployment.environment.name, k8s.cluster.name, k8s.container.name, k8s.cronjob.name, k8s.daemonset.name, k8s.deployment.name, k8s.job.name, k8s.namespace.name, k8s.pod.name, k8s.replicaset.name, k8s.statefulset.name\"\n```\n\nLearn more in Mimir [configuration parameters](https://github.com/grafana/mimir/blob/main/docs/sources/mimir/configure/configuration-parameters/index.md).\n\n### Grafana Cloud Metrics\n\nSend OpenTelemetry metrics to the Grafana Cloud OTLP Endpoint as documented in [Grafana Cloud / Send OTLP data](https://grafana.com/docs/grafana-cloud/send-data/otlp/send-data-otlp/) and open a support ticket to activate `otel_keep_identifying_resource_attributes`.\n\nNote that the Grafana Cloud OTLP Endpoint is configured by default to promote the following resource attributes, this list can be modified through a support ticket:\n\n```\n# REQUIRED FOR THIS DASHBOARD\n- service.instance.id\n- service.name\n- service.namespace\n- deployment.environment.name\n# RECOMMENDED FOR OTEL METRICS IN GENERAL\n- service.version\n- cloud.availability_zone\n- cloud.region\n- container.name\n- deployment.environment\n- k8s.cluster.name\n- k8s.container.name\n- k8s.cronjob.name\n- k8s.daemonset.name\n- k8s.deployment.name\n- k8s.job.name\n- k8s.namespace.name\n- k8s.pod.name\n- k8s.replicaset.name\n- k8s.statefulset.name\n```\n\n## Logs\n\n### Grafana Cloud Logs\n\nSend OpenTelemetry logs to the Grafana Cloud OTLP Endpoint as documented in [Grafana Cloud / Send OTLP data](https://grafana.com/docs/grafana-cloud/send-data/otlp/send-data-otlp/) and open a support ticket to activate `otel_keep_identifying_resource_attributes`.\n\n### Loki\n\nSend OpenTelemetry logs to the Loki OTLP Endpoint as documented in [Loki / Send data / OpenTelemetry](https://grafana.com/docs/loki/latest/send-data/otel/).\n\n## Traces\n\n### Grafana Cloud Traces\n\nSend OpenTelemetry traces to the Grafana Cloud OTLP Endpoint as documented in [Grafana Cloud / Send OTLP data](https://grafana.com/docs/grafana-cloud/send-data/otlp/send-data-otlp/).\n\n### Tempo\n\nSend OpenTelemetry traces to the Tempo OTLP Endpoint which supports both OTLP protocols: HTTP/Protobuf and gRPC.\n",
+        "content": "<h1 style=\"background-color:yellow ; color: black\">Dashboard setup instructions (delete this panel after setup)</h1>\n\nThis dashboard requires:\n\n## Metrics\n\nSend OpenTelemetry metrics to the OTLP endpoint of a Prometheus database.\n\n### Prometheus\n\nSend OpenTelemetry metrics to the Prometheus OTLP Endpoint and configure the parameters `keep_identifying_resource_attributes` and `promote_resource_attributes` on the OTLP endpoint. \n\nExample Prometheus OTLP Endpoint configuration snippet:\n\n```yml\notlp:\n  keep_identifying_resource_attributes: true\n  promote_resource_attributes:\n    # REQUIRED FOR THIS DASHBOARD\n    - service.instance.id\n    - service.name\n    - service.namespace\n    - deployment.environment.name\n    # RECOMMENDED FOR OTEL METRICS IN GENERAL\n    - service.version\n    - cloud.availability_zone\n    - cloud.region\n    - container.name\n    - deployment.environment\n    - k8s.cluster.name\n    - k8s.container.name\n    - k8s.cronjob.name\n    - k8s.daemonset.name\n    - k8s.deployment.name\n    - k8s.job.name\n    - k8s.namespace.name\n    - k8s.pod.name\n    - k8s.replicaset.name\n    - k8s.statefulset.name\n```\n\nLearn more in Prometheus [configuration reference](https://prometheus.io/docs/prometheus/latest/configuration/configuration/) and [OpenTelemetry guide](https://prometheus.io/docs/guides/opentelemetry/).\n\n### Mimir OTLP Endpoint configuration\n\nSend OpenTelemetry metrics to the Mimir OTLP Endpoint and configure the parameters `otel_keep_identifying_resource_attributes` and `promote_otel_resource_attributes` on the OTLP endpoint. \n\nExample Mimir OTLP Endpoint configuration snippet:\n\n```yml\n# (experimental) Whether to keep identifying OTel resource attributes in the\n# target_info metric on top of converting to job and instance labels.\n# CLI flag: -distributor.otel-keep-identifying-resource-attributes\notel_keep_identifying_resource_attributes: true\n# (experimental) Optionally specify OTel resource attributes to promote to\n# labels.\n# CLI flag: -distributor.otel-promote-resource-attributes\npromote_otel_resource_attributes: \"service.instance.id, service.name, service.namespace, service.version, cloud.availability_zone, cloud.region, container.name, deployment.environment, deployment.environment.name, k8s.cluster.name, k8s.container.name, k8s.cronjob.name, k8s.daemonset.name, k8s.deployment.name, k8s.job.name, k8s.namespace.name, k8s.pod.name, k8s.replicaset.name, k8s.statefulset.name\"\n```\n\nLearn more in Mimir [configuration parameters](https://github.com/grafana/mimir/blob/main/docs/sources/mimir/configure/configuration-parameters/index.md).\n\n### Grafana Cloud Metrics\n\nSend OpenTelemetry metrics to the Grafana Cloud OTLP Endpoint as documented in [Grafana Cloud / Send OTLP data](https://grafana.com/docs/grafana-cloud/send-data/otlp/send-data-otlp/) and open a support ticket to activate `otel_keep_identifying_resource_attributes`.\n\nNote that the Grafana Cloud OTLP Endpoint is configured by default to promote the following resource attributes, this list can be modified through a support ticket:\n\n```\n# REQUIRED FOR THIS DASHBOARD\n- service.instance.id\n- service.name\n- service.namespace\n- deployment.environment.name\n# RECOMMENDED FOR OTEL METRICS IN GENERAL\n- service.version\n- cloud.availability_zone\n- cloud.region\n- container.name\n- deployment.environment\n- k8s.cluster.name\n- k8s.container.name\n- k8s.cronjob.name\n- k8s.daemonset.name\n- k8s.deployment.name\n- k8s.job.name\n- k8s.namespace.name\n- k8s.pod.name\n- k8s.replicaset.name\n- k8s.statefulset.name\n```\n\n## Logs\n\n### Grafana Cloud Logs\n\nSend OpenTelemetry logs to the Grafana Cloud OTLP Endpoint as documented in [Grafana Cloud / Send OTLP data](https://grafana.com/docs/grafana-cloud/send-data/otlp/send-data-otlp/) and open a support ticket to activate `otel_keep_identifying_resource_attributes`.\n\n### Loki\n\nSend OpenTelemetry logs to the Loki OTLP Endpoint as documented in [Loki / Send data / OpenTelemetry](https://grafana.com/docs/loki/latest/send-data/otel/).\n\n## Traces\n\n### Grafana Cloud Traces\n\nSend OpenTelemetry traces to the Grafana Cloud OTLP Endpoint as documented in [Grafana Cloud / Send OTLP data](https://grafana.com/docs/grafana-cloud/send-data/otlp/send-data-otlp/).\n\n### Tempo\n\nSend OpenTelemetry traces to the Tempo OTLP Endpoint which supports both OTLP protocols: HTTP/Protobuf and gRPC.\n\n## Grafana\n\nTo prevent PromQL `rate` function issues with OpenTelemetry metrics in Grafana, either set your Prometheus Datasource's **\"scrape interval\"** to `60s` or, if that's not possible, configure each affected dashboard panel's **\"Min Step\"** option to `60s`.",
         "mode": "markdown"
       },
-      "pluginVersion": "12.0.0-85440",
+      "pluginVersion": "12.1.0-91094",
       "type": "text"
     },
     {
@@ -149,7 +148,7 @@
         "content": "<h1><img src=\"https://opentelemetry.io/img/logos/opentelemetry-logo-nav.png\" alt=\"OpenTelemetry Icon\" width=\"25\" height=\"\"> Service ${service_namespace}/${service_name} (env: ${deployment_environment_name})</h1>\n",
         "mode": "html"
       },
-      "pluginVersion": "12.0.0-85440",
+      "pluginVersion": "12.1.0-91094",
       "type": "text"
     },
     {
@@ -169,7 +168,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -205,7 +205,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.0.0-85440",
+      "pluginVersion": "12.1.0-91094",
       "targets": [
         {
           "datasource": {
@@ -214,6 +214,7 @@
           },
           "editorMode": "code",
           "expr": "timestamp(sum by (deployment_environment_name, service_namespace, service_name) (target_info{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}) or absent{})\n",
+          "interval": "60s",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -241,7 +242,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -278,7 +280,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.0.0-85440",
+      "pluginVersion": "12.1.0-91094",
       "targets": [
         {
           "datasource": {
@@ -314,7 +316,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -351,7 +354,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.0.0-85440",
+      "pluginVersion": "12.1.0-91094",
       "targets": [
         {
           "datasource": {
@@ -457,7 +460,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -489,7 +493,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.0-85440",
+      "pluginVersion": "12.1.0-91094",
       "targets": [
         {
           "datasource": {
@@ -502,6 +506,7 @@
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
+          "interval": "60s",
           "legendFormat": "P99",
           "range": true,
           "refId": "P99",
@@ -517,6 +522,7 @@
           "expr": "histogram_quantile(0.9, sum by(le, deployment_environment_name, service_namespace, service_name) (rate(http_server_request_duration_seconds_bucket{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval])))",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
+          "interval": "60s",
           "legendFormat": "P90",
           "range": true,
           "refId": "P90",
@@ -533,6 +539,7 @@
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
+          "interval": "60s",
           "legendFormat": "AVG",
           "range": true,
           "refId": "AVG",
@@ -593,7 +600,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -625,7 +633,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.0-85440",
+      "pluginVersion": "12.1.0-91094",
       "targets": [
         {
           "datasource": {
@@ -639,6 +647,7 @@
           "hide": false,
           "includeNullMetadata": true,
           "instant": false,
+          "interval": "60s",
           "legendFormat": "5xx",
           "range": true,
           "refId": "5xx",
@@ -700,7 +709,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -732,7 +742,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.0-85440",
+      "pluginVersion": "12.1.0-91094",
       "targets": [
         {
           "datasource": {
@@ -742,6 +752,7 @@
           "editorMode": "code",
           "expr": "(sum(rate(http_server_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval])) by (deployment_environment_name, service_namespace, service_name)) ",
           "hide": false,
+          "interval": "60s",
           "legendFormat": "Requests",
           "range": true,
           "refId": "RequestRate"
@@ -812,7 +823,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": 0
                   },
                   {
                     "color": "red",
@@ -828,7 +840,7 @@
             "h": 6,
             "w": 6,
             "x": 0,
-            "y": 10
+            "y": 17
           },
           "id": 33,
           "options": {
@@ -844,7 +856,7 @@
               "sort": "none"
             }
           },
-          "pluginVersion": "12.0.0-85369",
+          "pluginVersion": "12.1.0-91094",
           "targets": [
             {
               "datasource": {
@@ -857,6 +869,7 @@
               "fullMetaSearch": false,
               "hide": false,
               "includeNullMetadata": true,
+              "interval": "60s",
               "legendFormat": "P99",
               "range": true,
               "refId": "P99",
@@ -872,6 +885,7 @@
               "expr": "histogram_quantile(0.9, sum by(le, deployment_environment_name, service_namespace, service_name) (rate(rpc_server_duration_milliseconds_bucket{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval])))",
               "fullMetaSearch": false,
               "includeNullMetadata": true,
+              "interval": "60s",
               "legendFormat": "P90",
               "range": true,
               "refId": "P90",
@@ -888,6 +902,7 @@
               "fullMetaSearch": false,
               "hide": false,
               "includeNullMetadata": true,
+              "interval": "60s",
               "legendFormat": "AVG",
               "range": true,
               "refId": "AVG",
@@ -946,7 +961,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": 0
                   },
                   {
                     "color": "red",
@@ -962,7 +978,7 @@
             "h": 6,
             "w": 6,
             "x": 6,
-            "y": 10
+            "y": 17
           },
           "id": 34,
           "options": {
@@ -978,7 +994,7 @@
               "sort": "none"
             }
           },
-          "pluginVersion": "12.0.0-85369",
+          "pluginVersion": "12.1.0-91094",
           "targets": [
             {
               "datasource": {
@@ -992,6 +1008,7 @@
               "hide": false,
               "includeNullMetadata": true,
               "instant": false,
+              "interval": "60s",
               "legendFormat": "Error",
               "range": true,
               "refId": "ERR",
@@ -1053,7 +1070,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": 0
                   },
                   {
                     "color": "red",
@@ -1069,7 +1087,7 @@
             "h": 6,
             "w": 5,
             "x": 12,
-            "y": 10
+            "y": 17
           },
           "id": 35,
           "options": {
@@ -1085,7 +1103,7 @@
               "sort": "none"
             }
           },
-          "pluginVersion": "12.0.0-85369",
+          "pluginVersion": "12.1.0-91094",
           "targets": [
             {
               "datasource": {
@@ -1095,6 +1113,7 @@
               "editorMode": "code",
               "expr": "(sum(rate(rpc_server_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval])) by (deployment_environment_name, service_namespace, service_name)) * $__interval_ms / 1000",
               "hide": false,
+              "interval": "60s",
               "legendFormat": "Requests",
               "range": true,
               "refId": "RequestRate"
@@ -1143,7 +1162,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -1220,7 +1240,7 @@
           }
         ]
       },
-      "pluginVersion": "12.0.0-85440",
+      "pluginVersion": "12.1.0-91094",
       "targets": [
         {
           "datasource": {
@@ -1232,6 +1252,7 @@
           "expr": "\n        sum by (operation) (\n            label_join(\n                rate(http_server_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n            )\n        )\n    ",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
+          "interval": "60s",
           "legendFormat": "{{operation}}",
           "range": true,
           "refId": "RPS",
@@ -1246,6 +1267,7 @@
           "expr": "(\n        sum by (operation) (\n            label_join(\n                rate(http_server_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\", http_response_status_code=~\"5..\"}[$__rate_interval]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n            )\n        )\n     / \n        sum by (operation) (\n            label_join(\n                rate(http_server_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n            )\n        )\n    ) or (0 * \n        sum by (operation) (\n            label_join(\n                rate(http_server_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n            )\n        )\n    )",
           "hide": false,
           "instant": false,
+          "interval": "60s",
           "legendFormat": "{{operation}}",
           "range": true,
           "refId": "ERR_PCT"
@@ -1259,6 +1281,7 @@
           "expr": "\n        histogram_quantile(\n            0.99,\n            sum by (le, operation) (\n                label_join(\n                rate(http_server_request_duration_seconds_bucket{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[5m]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n                )\n            )\n        )\n    ",
           "hide": false,
           "instant": false,
+          "interval": "60s",
           "legendFormat": "{{operation}}",
           "range": true,
           "refId": "Duration"
@@ -1332,7 +1355,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -1405,7 +1429,7 @@
           }
         ]
       },
-      "pluginVersion": "12.0.0-85440",
+      "pluginVersion": "12.1.0-91094",
       "targets": [
         {
           "datasource": {
@@ -1418,6 +1442,7 @@
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
+          "interval": "60s",
           "legendFormat": "__auto",
           "range": true,
           "refId": "RPS",
@@ -1432,6 +1457,7 @@
           "expr": "(\n        sum by (operation) (\n            label_join(\n                rate(rpc_server_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\", rpc_grpc_status_code!=\"0\"}[$__rate_interval]),\n                \"operation\",\n                \"/\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n     / \n        sum by (operation) (\n            label_join(\n                rate(rpc_server_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"operation\",\n                \"/\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n    ) or (0 * \n        sum by (operation) (\n            label_join(\n                rate(rpc_server_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"operation\",\n                \"/\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n    )\n    ",
           "hide": false,
           "instant": false,
+          "interval": "60s",
           "legendFormat": "__auto",
           "range": true,
           "refId": "ERR_PCT"
@@ -1445,6 +1471,7 @@
           "expr": "\n        histogram_quantile(\n            0.99,\n            sum by (le, operation) (\n                label_join(\n                rate(rpc_server_duration_milliseconds_bucket{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[5m]),\n                \"operation\",\n                \"/\",\n                \"rpc_service\",\n                \"rpc_method\"\n                )\n            )\n        )\n    ",
           "hide": false,
           "instant": false,
+          "interval": "60s",
           "legendFormat": "{{operation}}",
           "range": true,
           "refId": "Duration"
@@ -1531,7 +1558,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -1598,7 +1626,7 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "12.0.0-85440",
+      "pluginVersion": "12.1.0-91094",
       "targets": [
         {
           "datasource": {
@@ -1610,6 +1638,7 @@
           "expr": "\n        sum by (outbound_service) (\n            label_join(\n                rate(http_client_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \" \",\n                \"server_address\",\n                \"http_request_method\",\n                \"url_template\"\n            )\n        )\n    ",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
+          "interval": "60s",
           "legendFormat": "{{server_address}} {{http_request_method}} {{url_template}}",
           "range": true,
           "refId": "RPS",
@@ -1624,6 +1653,7 @@
           "expr": "(\n        sum by (outbound_service) (\n            label_join(\n                rate(http_client_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\", http_response_status_code=~\"5..\"}[$__rate_interval]),\n                \"outbound_service\",\n                \" \",\n                \"server_address\",\n                \"http_request_method\",\n                \"url_template\"\n            )\n        )\n     / \n        sum by (outbound_service) (\n            label_join(\n                rate(http_client_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \" \",\n                \"server_address\",\n                \"http_request_method\",\n                \"url_template\"\n            )\n        )\n    ) or (0 * \n        sum by (outbound_service) (\n            label_join(\n                rate(http_client_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \" \",\n                \"server_address\",\n                \"http_request_method\",\n                \"url_template\"\n            )\n        )\n    )",
           "hide": false,
           "instant": false,
+          "interval": "60s",
           "legendFormat": "{{server_address}} {{http_request_method}} {{url_template}}",
           "range": true,
           "refId": "ERR_PCT"
@@ -1637,6 +1667,7 @@
           "expr": "\nhistogram_quantile(\n    0.99,\n    sum by (le, outbound_service) (\n        label_join(\n        rate(http_client_request_duration_seconds_bucket{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[5m]),\n        \"outbound_service\",\n        \" \",\n        \"server_address\",\n        \"http_request_method\",\n        \"url_template\"\n        )\n    )\n)",
           "hide": false,
           "instant": false,
+          "interval": "60s",
           "legendFormat": "{{server_address}} {{http_request_method}} {{url_template}}",
           "range": true,
           "refId": "DURATION"
@@ -1712,7 +1743,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -1780,7 +1812,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "12.0.0-85440",
+      "pluginVersion": "12.1.0-91094",
       "targets": [
         {
           "datasource": {
@@ -1793,6 +1825,7 @@
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
+          "interval": "60s",
           "legendFormat": "{{server_address}} {{db_namespace}}",
           "range": true,
           "refId": "RPS",
@@ -1807,6 +1840,7 @@
           "expr": "(\n        sum by (database) (\n            label_join(\n                rate(db_client_operation_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\", http_response_status_code=~\"5..\"}[$__rate_interval]),\n                \"database\",\n                \"/\",\n                \"server_address\",\n                \"db_namespace\"\n            )\n        )\n     / \n        sum by (database) (\n            label_join(\n                rate(db_client_operation_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"database\",\n                \"/\",\n                \"server_address\",\n                \"db_namespace\"\n            )\n        )\n    ) or (0 * \n        sum by (database) (\n            label_join(\n                rate(db_client_operation_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"database\",\n                \"/\",\n                \"server_address\",\n                \"db_namespace\"\n            )\n        )\n    )",
           "hide": false,
           "instant": false,
+          "interval": "60s",
           "legendFormat": "{{server_address}} {{db_namespace}}",
           "range": true,
           "refId": "ERR_PCT"
@@ -1820,6 +1854,7 @@
           "expr": "\nhistogram_quantile(\n    0.99,\n    sum by (le, database) (\n        label_join(\n        rate(db_client_operation_duration_seconds_bucket{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[5m]),\n            \"database\",\n            \"/\",\n            \"server_address\",\n            \"db_namespace\"\n        )\n    )\n)",
           "hide": false,
           "instant": false,
+          "interval": "60s",
           "legendFormat": "{{server_address}} {{db_namespace}}",
           "range": true,
           "refId": "DURATION"
@@ -1900,7 +1935,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -1967,7 +2003,7 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "12.0.0-85440",
+      "pluginVersion": "12.1.0-91094",
       "targets": [
         {
           "datasource": {
@@ -1980,6 +2016,7 @@
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
+          "interval": "60s",
           "legendFormat": "__auto",
           "range": true,
           "refId": "RPS",
@@ -1994,6 +2031,7 @@
           "expr": "(\n        sum by (outbound_service) (\n            label_join(\n                rate(rpc_client_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\", http_response_status_code=~\"5..\"}[$__rate_interval]),\n                \"outbound_service\",\n                \"/\",\n                \"server_address\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n     / \n        sum by (outbound_service) (\n            label_join(\n                rate(rpc_client_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \"/\",\n                \"server_address\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n    ) or (0 * \n        sum by (outbound_service) (\n            label_join(\n                rate(rpc_client_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \"/\",\n                \"server_address\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n    )",
           "hide": false,
           "instant": false,
+          "interval": "60s",
           "legendFormat": "__auto",
           "range": true,
           "refId": "ERR_PCT"
@@ -2007,6 +2045,7 @@
           "expr": "\nhistogram_quantile(\n    0.99,\n    sum by (le, outbound_service) (\n        label_join(\n        rate(rpc_client_duration_milliseconds_bucket{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[5m]),\n        \"outbound_service\",\n        \"/\",\n        \"server_address\",\n        \"rpc_service\",\n        \"rpc_method\"\n        )\n    )\n)",
           "hide": false,
           "instant": false,
+          "interval": "60s",
           "legendFormat": "__auto",
           "range": true,
           "refId": "DURATION"
@@ -2096,7 +2135,7 @@
         "sortOrder": "Ascending",
         "wrapLogMessage": false
       },
-      "pluginVersion": "12.0.0-85440",
+      "pluginVersion": "12.1.0-91094",
       "targets": [
         {
           "datasource": {
@@ -2148,7 +2187,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -2240,7 +2280,7 @@
         "frameIndex": 0,
         "showHeader": true
       },
-      "pluginVersion": "12.0.0-85440",
+      "pluginVersion": "12.1.0-91094",
       "targets": [
         {
           "datasource": {
@@ -2325,7 +2365,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -2380,7 +2421,7 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "12.0.0-85440",
+      "pluginVersion": "12.1.0-91094",
       "targets": [
         {
           "datasource": {
@@ -2390,6 +2431,7 @@
           "editorMode": "code",
           "expr": "sum by(service_instance_id) (jvm_cpu_recent_utilization_ratio{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"})",
           "hide": false,
+          "interval": "60s",
           "legendFormat": "__auto",
           "range": true,
           "refId": "CPU_PCT"
@@ -2403,6 +2445,7 @@
           "expr": "sum by(service_instance_id) (rate(jvm_gc_duration_seconds_sum{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]))",
           "hide": false,
           "instant": false,
+          "interval": "60s",
           "legendFormat": "__auto",
           "range": true,
           "refId": "GC_PCT"
@@ -2566,6 +2609,7 @@
   "timezone": "",
   "title": "Lightweight APM for OpenTelemetry",
   "uid": "febljk0a32qyoa",
-  "version": 38,
-  "weekStart": ""
+  "version": 41,
+  "weekStart": "",
+  "id": null
 }
