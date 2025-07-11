@@ -111,12 +111,12 @@ Note that the Grafana Cloud OTLP Endpoint is configured by default to promote th
 
 ## FAQ
 
-## What are the compatible OpenTelemetry SDKs and auto-instrumentations
+### What are the compatible OpenTelemetry SDKs and auto-instrumentations
 
 Dashboard mostly tested with the [OpenTelemetry Instrumentation for Java](https://github.com/open-telemetry/opentelemetry-java-instrumentation),
 compatible with instrumentation that produce OpenTelemetry compliant traces, logs, [HTTP metrics](https://opentelemetry.io/docs/specs/semconv/http/http-metrics/), [gRPC metrics](https://opentelemetry.io/docs/specs/semconv/rpc/rpc-metrics/), or [Database Client Metrics](https://opentelemetry.io/docs/specs/semconv/database/database-metrics/).
 
-## How to send OpenTelemetry traces, metrics, and logs to Grafana Tempo, Mimir, and Loki
+### How to send OpenTelemetry traces, metrics, and logs to Grafana Tempo, Mimir, and Loki
 
 ### Grafana Cloud
 
@@ -182,9 +182,13 @@ service:
       #exporters: [otlphttp/logs,debug/logs]
 ```
 
-## The drop down list for services is empty
+### The drop down list for services is empty
 
 TODO
+
+## Alerting and SLOs
+
+See [Alerting and SLOs](./alerting.md).
 
 ## Support
 
