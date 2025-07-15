@@ -456,6 +456,7 @@
           },
           "mappings": [],
           "min": 0,
+          "noValue": "No HTTP Operation",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -596,6 +597,7 @@
             }
           },
           "mappings": [],
+          "noValue": "No HTTP Operation",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -642,7 +644,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "(sum by(deployment_environment_name, service_namespace, service_name) (rate(http_server_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\", http_response_status_code=~\"5..\"}[$__rate_interval])) * 100) / sum by(deployment_environment_name, service_namespace, service_name) (rate(http_server_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]))",
+          "expr": "(\n  sum by(deployment_environment_name, service_namespace, service_name) (\n    rate(\n      http_server_request_duration_seconds_count{\n        deployment_environment_name=~\"$deployment_environment_name\",\n        service_namespace=~\"$service_namespace\",\n        service_name=\"$service_name\",\n        http_response_status_code=~\"5..\"\n      }[$__rate_interval]\n    )\n  ) * 100\n)\n/\n(\n  sum by(deployment_environment_name, service_namespace, service_name) (\n    rate(\n      http_server_request_duration_seconds_count{\n        deployment_environment_name=~\"$deployment_environment_name\",\n        service_namespace=~\"$service_namespace\",\n        service_name=\"$service_name\"\n      }[$__rate_interval]\n    )\n  )\n)\nor\n(\n  0\n  *\n  sum by(deployment_environment_name, service_namespace, service_name) (\n    rate(\n      http_server_request_duration_seconds_count{\n        deployment_environment_name=~\"$deployment_environment_name\",\n        service_namespace=~\"$service_namespace\",\n        service_name=\"$service_name\"\n      }[$__rate_interval]\n    )\n  )\n)",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
@@ -705,6 +707,7 @@
           },
           "mappings": [],
           "min": 0,
+          "noValue": "No HTTP Operation",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -819,6 +822,7 @@
               },
               "mappings": [],
               "min": 0,
+              "noValue": "No RPC operation",
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -917,7 +921,7 @@
             "type": "prometheus",
             "uid": "${prometheus_datasource}"
           },
-          "description": "gRPC endpoints aggregation based on the `rpc.server.duration` metric.\n\nErrors are identified by `rpc.grpc.status_code != 0` which make the panel specific to the gRPC protocol.\n\nSee https://opentelemetry.io/docs/specs/semconv/rpc/rpc-metrics/#metric-rpcserverdurationInbound ",
+          "description": "RPC endpoints aggregation based on the `rpc.server.duration` metric.\n\nErrors are identified by `rpc.grpc.status_code != 0` which make the panel specific to the gRPC protocol.\n\nSee https://opentelemetry.io/docs/specs/semconv/rpc/rpc-metrics/#metric-rpcserverdurationInbound ",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -957,6 +961,7 @@
                 }
               },
               "mappings": [],
+              "noValue": "No RPC operation",
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -1003,7 +1008,7 @@
               },
               "disableTextWrap": false,
               "editorMode": "code",
-              "expr": "(sum without (rpc_grpc_status_code, instance) (rate(rpc_server_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\", rpc_grpc_status_code!=\"0\"}[$__rate_interval])) * 100) / sum without (rpc_grpc_status_code, instance) (rate(rpc_server_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]))",
+              "expr": "(\n  sum without (rpc_grpc_status_code, instance) (\n    rate(\n      rpc_server_duration_milliseconds_count{\n        deployment_environment_name=~\"$deployment_environment_name\",\n        service_namespace=~\"$service_namespace\",\n        service_name=\"$service_name\",\n        rpc_grpc_status_code!=\"0\"\n      }[$__rate_interval]\n    )\n  ) * 100\n)\n/\n(\n  sum without (rpc_grpc_status_code, instance) (\n    rate(\n      rpc_server_duration_milliseconds_count{\n        deployment_environment_name=~\"$deployment_environment_name\",\n        service_namespace=~\"$service_namespace\",\n        service_name=\"$service_name\"\n      }[$__rate_interval]\n    )\n  )\n)\nor \n(\n    0\n    *\n    sum without (rpc_grpc_status_code, instance) (\n    rate(\n      rpc_server_duration_milliseconds_count{\n        deployment_environment_name=~\"$deployment_environment_name\",\n        service_namespace=~\"$service_namespace\",\n        service_name=\"$service_name\"\n      }[$__rate_interval]\n    )\n  )\n)",
               "fullMetaSearch": false,
               "hide": false,
               "includeNullMetadata": true,
@@ -1015,7 +1020,7 @@
               "useBackend": false
             }
           ],
-          "title": "Error",
+          "title": "gRPC Error",
           "type": "timeseries"
         },
         {
@@ -1066,6 +1071,7 @@
               },
               "mappings": [],
               "min": 0,
+              "noValue": "No RPC operation",
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -1123,7 +1129,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Server gRPC RED Metrics",
+      "title": "Server RPC RED Metrics",
       "type": "row"
     },
     {
@@ -1158,6 +1164,7 @@
             "inspect": false
           },
           "mappings": [],
+          "noValue": "No HTTP operation",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1337,7 +1344,7 @@
         "type": "prometheus",
         "uid": "${prometheus_datasource}"
       },
-      "description": "Inbound gRPC operations of the service (aka gRPC endpoints) based on the `rpc.server.request.duration` metric.\n\nErrors are identified by `rpc.grpc.status_code != 0` which make the panel specific to the gRPC protocol.\n\nhttps://opentelemetry.io/docs/specs/semconv/rpc/rpc-metrics/#metric-rpcserverduration",
+      "description": "Inbound RPC operations of the service (aka RPC endpoints) based on the `rpc.server.request.duration` metric.\n\nErrors are identified by `rpc.grpc.status_code != 0` which make the panel specific to the gRPC protocol.\n\nhttps://opentelemetry.io/docs/specs/semconv/rpc/rpc-metrics/#metric-rpcserverduration",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1351,6 +1358,7 @@
             "inspect": false
           },
           "mappings": [],
+          "noValue": "No RPC operation",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1477,7 +1485,7 @@
           "refId": "Duration"
         }
       ],
-      "title": "gRPC Operations",
+      "title": "RPC Operations",
       "transformations": [
         {
           "id": "timeSeriesTable",
@@ -1554,6 +1562,7 @@
             "inspect": false
           },
           "mappings": [],
+          "noValue": "No HTTP call",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1635,7 +1644,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "\n        sum by (outbound_service) (\n            label_join(\n                rate(http_client_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \" \",\n                \"server_address\",\n                \"http_request_method\",\n                \"url_template\"\n            )\n        )\n    ",
+          "expr": "sum by (outbound_service) (\n  label_join(\n    rate(\n      http_client_request_duration_seconds_count{\n        deployment_environment_name=~\"$deployment_environment_name\",\n        service_namespace=~\"$service_namespace\",\n        service_name=\"$service_name\"\n      }[$__rate_interval]\n    ),\n    \"outbound_service\",\n    \" \",\n    \"server_address\",\n    \"http_request_method\",\n    \"url_template\"\n  )\n)",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "interval": "60s",
@@ -1650,7 +1659,7 @@
             "uid": "${prometheus_datasource}"
           },
           "editorMode": "code",
-          "expr": "(\n        sum by (outbound_service) (\n            label_join(\n                rate(http_client_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\", http_response_status_code=~\"5..\"}[$__rate_interval]),\n                \"outbound_service\",\n                \" \",\n                \"server_address\",\n                \"http_request_method\",\n                \"url_template\"\n            )\n        )\n     / \n        sum by (outbound_service) (\n            label_join(\n                rate(http_client_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \" \",\n                \"server_address\",\n                \"http_request_method\",\n                \"url_template\"\n            )\n        )\n    ) or (0 * \n        sum by (outbound_service) (\n            label_join(\n                rate(http_client_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \" \",\n                \"server_address\",\n                \"http_request_method\",\n                \"url_template\"\n            )\n        )\n    )",
+          "expr": "(\n  sum by (outbound_service) (\n    label_join(\n      rate(\n        http_client_request_duration_seconds_count{\n          deployment_environment_name=~\"$deployment_environment_name\",\n          service_namespace=~\"$service_namespace\",\n          service_name=\"$service_name\",\n          http_response_status_code=~\"5..\"\n        }[$__rate_interval]\n      ),\n      \"outbound_service\",\n      \" \",\n      \"server_address\",\n      \"http_request_method\",\n      \"url_template\"\n    )\n  )\n  /\n  sum by (outbound_service) (\n    label_join(\n      rate(\n        http_client_request_duration_seconds_count{\n          deployment_environment_name=~\"$deployment_environment_name\",\n          service_namespace=~\"$service_namespace\",\n          service_name=\"$service_name\"\n        }[$__rate_interval]\n      ),\n      \"outbound_service\",\n      \" \",\n      \"server_address\",\n      \"http_request_method\",\n      \"url_template\"\n    )\n  )\n)\nor\n(\n  0\n  *\n  sum by (outbound_service) (\n    label_join(\n      rate(\n        http_client_request_duration_seconds_count{\n          deployment_environment_name=~\"$deployment_environment_name\",\n          service_namespace=~\"$service_namespace\",\n          service_name=\"$service_name\"\n        }[$__rate_interval]\n      ),\n      \"outbound_service\",\n      \" \",\n      \"server_address\",\n      \"http_request_method\",\n      \"url_template\"\n    )\n  )\n)",
           "hide": false,
           "instant": false,
           "interval": "60s",
@@ -1664,7 +1673,7 @@
             "uid": "${DS_GRAFANACLOUD-CLECLERC-PROM}"
           },
           "editorMode": "code",
-          "expr": "\nhistogram_quantile(\n    0.99,\n    sum by (le, outbound_service) (\n        label_join(\n        rate(http_client_request_duration_seconds_bucket{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[5m]),\n        \"outbound_service\",\n        \" \",\n        \"server_address\",\n        \"http_request_method\",\n        \"url_template\"\n        )\n    )\n)",
+          "expr": "histogram_quantile(\n  0.99,\n  sum by (le, outbound_service) (\n    label_join(\n      rate(\n        http_client_request_duration_seconds_bucket{\n          deployment_environment_name=~\"$deployment_environment_name\",\n          service_namespace=~\"$service_namespace\",\n          service_name=\"$service_name\"\n        }[5m]\n      ),\n      \"outbound_service\",\n      \" \",\n      \"server_address\",\n      \"http_request_method\",\n      \"url_template\"\n    )\n  )\n)",
           "hide": false,
           "instant": false,
           "interval": "60s",
@@ -1739,6 +1748,7 @@
             "inspect": false
           },
           "mappings": [],
+          "noValue": "No database call",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1821,7 +1831,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum by (database) (\n    label_join(\n        rate(db_client_operation_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n        \"database\",\n        \"/\",\n        \"server_address\",\n        \"db_namespace\"\n    )\n)\n    ",
+          "expr": "sum by (database) (\n  label_join(\n    rate(\n      db_client_operation_duration_seconds_count{\n        deployment_environment_name=~\"$deployment_environment_name\",\n        service_namespace=~\"$service_namespace\",\n        service_name=\"$service_name\"\n      }[$__rate_interval]\n    ),\n    \"database\",\n    \"/\",\n    \"server_address\",\n    \"db_namespace\"\n  )\n)",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
@@ -1851,7 +1861,7 @@
             "uid": "${DS_GRAFANACLOUD-CLECLERC-PROM}"
           },
           "editorMode": "code",
-          "expr": "\nhistogram_quantile(\n    0.99,\n    sum by (le, database) (\n        label_join(\n        rate(db_client_operation_duration_seconds_bucket{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[5m]),\n            \"database\",\n            \"/\",\n            \"server_address\",\n            \"db_namespace\"\n        )\n    )\n)",
+          "expr": "histogram_quantile(\n  0.99,\n  sum by (le, database) (\n    label_join(\n      rate(\n        db_client_operation_duration_seconds_bucket{\n          deployment_environment_name=~\"$deployment_environment_name\",\n          service_namespace=~\"$service_namespace\",\n          service_name=\"$service_name\"\n        }[5m]\n      ),\n      \"database\",\n      \"/\",\n      \"server_address\",\n      \"db_namespace\"\n    )\n  )\n)",
           "hide": false,
           "instant": false,
           "interval": "60s",
@@ -1917,7 +1927,7 @@
         "type": "prometheus",
         "uid": "${prometheus_datasource}"
       },
-      "description": "gRPC calls made by the service based on the `rpc.client.request.duration` metric.\n\nSpecific to gRPC due to the usage of the `grpc.status.code` attribute to identify errors.\n\nCalls broken down by `server.address`, `rpc.service`, and `rpc.method`.\n\nSee https://opentelemetry.io/docs/specs/semconv/rpc/rpc-metrics/#rpc-client\n\n",
+      "description": "RPC calls made by the service based on the `rpc.client.request.duration` metric.\n\nSpecific to gRPC due to the usage of the `grpc.status.code` attribute to identify errors.\n\nCalls broken down by `server.address`, `rpc.service`, and `rpc.method`.\n\nSee https://opentelemetry.io/docs/specs/semconv/rpc/rpc-metrics/#rpc-client\n\n",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1931,6 +1941,7 @@
             "inspect": false
           },
           "mappings": [],
+          "noValue": "No RPC call",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -2051,7 +2062,7 @@
           "refId": "DURATION"
         }
       ],
-      "title": "Outbound gRPC Services",
+      "title": "Outbound RPC Services",
       "transformations": [
         {
           "id": "timeSeriesTable",
@@ -2183,6 +2194,7 @@
             "inspect": false
           },
           "mappings": [],
+          "noValue": "No traces",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -2361,6 +2373,7 @@
             "inspect": false
           },
           "mappings": [],
+          "noValue": "No JVM metrics",
           "thresholds": {
             "mode": "absolute",
             "steps": [
