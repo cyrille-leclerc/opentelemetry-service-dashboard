@@ -1,12 +1,14 @@
+# Prometheus alerts for OpenTelemetry
 
+OpenTelemetry standardizes most of the [RED metrics](https://grafana.com/blog/2018/08/02/the-red-method-how-to-instrument-your-services/) needed to implement alerting and SLOs such as [HTTP metrics](https://opentelemetry.io/docs/specs/semconv/http/http-metrics/), [database metrics](https://opentelemetry.io/docs/specs/semconv/database/database-metrics/), [RPC metrics](https://opentelemetry.io/docs/specs/semconv/rpc/rpc-metrics/), or [Messaging metrics](https://opentelemetry.io/docs/specs/semconv/messaging/messaging-metrics/).
 
+Here are OpenTelemetry alerts for common use cases, these alerts include the PRomQL query, the Prometheus Alert Manager config, and the Grafana Alert config.
 
+## Alerting and SLOs for HTTP services
 
+The `http.server.request.duration` metric enables creating all the useful alert rules to monitor HTTP services.
 
-
-
-
-## Error percentage alert
+### Alerting on HTTP response error percentage
 
 ```promql
 (
@@ -38,9 +40,9 @@ sum by(deployment_environment_name, service_namespace, service_name) (
 )
 ```
 
-## P95 response time alert
+### Alerting on HTTP response duration (P95 percentile)
 
-### PromQL
+#### PromQL
 
 ```promql
 histogram_quantile(
@@ -59,7 +61,7 @@ histogram_quantile(
 )
 ```
 
-### Prometheus Alert Manager
+#### Prometheus Alert Manager
 
 ```yaml
 alert: EcommerceFrontendServicePlaceOrderHighLatencyProm
@@ -95,12 +97,11 @@ annotations:
     value: {{ $value }}.
 ```
 
-
-### Grafana Alert Manager
+#### Grafana Alert Manager
 
 * PromQL
 
-```
+```promql
 histogram_quantile(
   0.95,
   sum by(le, deployment_environment_name, service_namespace, service_name, http_request_method, http_route, service_instance_id) (
@@ -123,13 +124,13 @@ histogram_quantile(
   * `team_name:  ecommerce`
 * Summary
   
-```
+```text
 High P95 for {{ index $labels "service_namespace" }}/{{ index $labels "service_name" }} "{{ index $labels "http_request_method" }} {{ index $labels "http_route" }}" ({{ index $labels "deployment_environment_name" }})
 ```
 
 * Description
 
-```
+```text
 The 95th percentile response time for operation {{ index $labels "service_namespace" }}/{{ index $labels "service_name" }} "{{ index $labels "http_request_method" }} {{ index $labels "http_route" }}" ({{ index $labels "deployment_environment_name" }}) has been above 2 seconds for 2 minutes on {{ index $labels "service_instance_id"}}. Current value: {{ index $values "A" }}.
 ```
 
@@ -220,12 +221,11 @@ groups:
 
 </details>
 
+### Ratio based SLO on HTTP response error and duration
 
-# SLO
+Percentage of HTTP responses completing successfully (`2xx`) in `1s` max:
 
-Requests complete successfully in `1s` max:
-
-```
+```promql
 (
   sum(
     rate(
@@ -257,5 +257,3 @@ sum(
   )
 )
 ```
-
-
